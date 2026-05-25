@@ -1,26 +1,80 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
+/* ─── Equatorial Palette ──────────────────────────────────────────────────── */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Grounds */
+  --color-cream:  #f4f1e8;   /* App background */
+  --color-mist:   #e3e3d8;   /* Cards, panels */
+
+  /* Dark surfaces */
+  --color-forest: #1a2620;   /* Footers, employer header, mark */
+  --color-deep:   #28342e;   /* Inset deep panels */
+
+  /* Ink */
+  --color-char:   #1c1a16;   /* Primary type */
+  --color-moss:   #54625a;   /* Secondary type, captions */
+
+  /* Brand */
+  --color-amber:  #c4823a;   /* CTAs, primary actions */
+  --color-terra:  #a85a3a;   /* Warm secondary accent */
+  --color-sage:   #6e7a5f;   /* Success, matched, ready */
+  --color-sand:   #d6c79a;   /* Empty states, soft panels */
+
+  /* Semantic aliases */
+  --color-background: var(--color-cream);
+  --color-foreground: var(--color-char);
+  --color-primary:    var(--color-amber);
+  --color-secondary:  var(--color-terra);
+  --color-signal:     var(--color-sage);
+  --color-surface:    var(--color-forest);
+  --color-muted:      var(--color-moss);
+
+  /* Typography */
+  --font-sans:    "Hanken Grotesk", system-ui, sans-serif;
+  --font-display: "Bricolage Grotesque", system-ui, sans-serif;
+  --font-serif:   "Instrument Serif", Georgia, serif;
+  --font-mono:    "JetBrains Mono", "Courier New", monospace;
+
+  /* Spacing scale anchor */
+  --spacing: 0.25rem;
+
+  /* Radius */
+  --radius-sm:  0.25rem;
+  --radius-md:  0.5rem;
+  --radius-lg:  0.75rem;
+  --radius-xl:  1rem;
+  --radius-2xl: 1.5rem;
+  --radius-full: 9999px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ─── Base ────────────────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-cream);
+  color: var(--color-char);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+}
+
+/* ─── Focus ring ──────────────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--color-amber);
+  outline-offset: 2px;
+}
+
+/* ─── Selection ───────────────────────────────────────────────────────────── */
+::selection {
+  background: color-mix(in srgb, var(--color-amber) 20%, transparent);
+  color: var(--color-char);
 }
