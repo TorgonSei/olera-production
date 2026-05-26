@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createServiceClient } from "@/lib/supabase/server";
+import { createClient, createServiceClient } from "@/lib/supabase/server";
 import Anthropic from "@anthropic-ai/sdk";
 import { Resend } from "resend";
 
@@ -53,13 +53,16 @@ export async function POST(
 ) {
   try {
     const { id } = await params;
-    const supabase = await createServiceClient();
 
-    // Auth
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    // Auth check — cookie-aware client
+    const supabaseAuth = await createClient();
+    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
     if (authError || !user) {
       return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
     }
+
+    // Service client — bypasses RLS for all DB writes
+    const supabase = createServiceClient();
 
     // Ownership check
     const { data: candidate } = await supabase

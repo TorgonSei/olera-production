@@ -7,7 +7,7 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const supabase = await createServiceClient();
+    const supabase = createServiceClient();
 
     const { data } = await supabase
       .from("candidates")

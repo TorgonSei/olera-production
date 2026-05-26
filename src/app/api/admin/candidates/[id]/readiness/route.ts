@@ -11,7 +11,7 @@ export async function PATCH(
 ) {
   try {
     const { id } = await params;
-    const supabase = await createServiceClient();
+    const supabase = createServiceClient();
 
     // Admin auth check
     const { data: { user } } = await supabase.auth.getUser();

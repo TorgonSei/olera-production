@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createServiceClient } from "@/lib/supabase/server";
+import { createClient, createServiceClient } from "@/lib/supabase/server";
 
 export async function PATCH(
   req: NextRequest,
@@ -7,13 +7,16 @@ export async function PATCH(
 ) {
   try {
     const { id } = await params;
-    const supabase = await createServiceClient();
 
-    // Auth check
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    // Auth check — cookie-aware client
+    const supabaseAuth = await createClient();
+    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
     if (authError || !user) {
       return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
     }
+
+    // Service client — bypasses RLS for DB writes
+    const supabase = createServiceClient();
 
     // Ensure candidate belongs to this user
     const { data: candidate } = await supabase

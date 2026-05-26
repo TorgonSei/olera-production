@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createServiceClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 
 export async function POST(req: NextRequest) {
   try {
@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
     // Normalize to E.164
     const normalized = phone.replace(/\s+/g, "").replace(/^0/, "+254");
 
-    const supabase = await createServiceClient();
+    const supabase = await createClient();
 
     // Supabase phone OTP — requires Africa's Talking or Twilio SMS provider
     const { error } = await supabase.auth.signInWithOtp({

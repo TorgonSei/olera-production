@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createServiceClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 
 export async function POST(req: NextRequest) {
   try {
@@ -9,7 +9,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Phone and token required" }, { status: 400 });
     }
 
-    const supabase = await createServiceClient();
+    const supabase = await createClient();
 
     const { data, error } = await supabase.auth.verifyOtp({
       phone,
