@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useState, useCallback, Suspense } from "react";
+import React, { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { OleraLockupH, Olera3A, COLORS } from "@/components/brand/Mark";
+import { OleraLockupH, COLORS } from "@/components/brand/Mark";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { cn } from "@/lib/cn";
-import { ArrowRight, Upload, FileText, Phone, ShieldCheck } from "lucide-react";
+import { ArrowRight, Mail, ShieldCheck } from "lucide-react";
 
 /* ─── Track config ──────────────────────────────────────────────────────── */
 const TRACKS = [
@@ -31,9 +31,8 @@ const TRACKS = [
 ];
 
 type Track = (typeof TRACKS)[number]["id"];
-type Step = "track" | "phone" | "otp" | "cv";
+type Step = "track" | "details" | "otp";
 
-/* ─── Page ──────────────────────────────────────────────────────────────── */
 export default function JoinPage() {
   return (
     <Suspense>
@@ -47,37 +46,33 @@ function JoinPageInner() {
   const searchParams = useSearchParams();
   const initialTrack = (searchParams.get("track") as Track) ?? null;
 
-  const [step, setStep] = useState<Step>(initialTrack ? "phone" : "track");
+  const [step, setStep] = useState<Step>(initialTrack ? "details" : "track");
   const [track, setTrack] = useState<Track | null>(initialTrack);
-  const [phone, setPhone] = useState("");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [otp, setOtp] = useState("");
-  const [otpSent, setOtpSent] = useState(false);
-  const [cvFile, setCvFile] = useState<File | null>(null);
-  const [cvDragging, setCvDragging] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   /* ── Step 1: select track ─────────────────────────────────────────────── */
   const handleTrackSelect = (t: Track) => {
     setTrack(t);
-    setStep("phone");
+    setStep("details");
   };
 
-  /* ── Step 2: send OTP ─────────────────────────────────────────────────── */
+  /* ── Step 2: send email OTP ───────────────────────────────────────────── */
   const handleSendOtp = async () => {
     setError("");
-    if (!phone.trim()) {
-      setError("Please enter your phone number.");
-      return;
-    }
+    if (!name.trim()) { setError("Please enter your name."); return; }
+    if (!email.trim() || !email.includes("@")) { setError("Please enter a valid email address."); return; }
     setLoading(true);
     try {
       const res = await fetch("/api/auth/otp/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone }),
+        body: JSON.stringify({ email: email.trim(), name: name.trim() }),
       });
-      if (!res.ok) throw new Error((await res.json()).error ?? "Failed to send OTP");
+      if (!res.ok) throw new Error((await res.json()).error ?? "Failed to send code");
       setStep("otp");
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Something went wrong");
@@ -89,25 +84,16 @@ function JoinPageInner() {
   /* ── Step 3: verify OTP ───────────────────────────────────────────────── */
   const handleVerifyOtp = async () => {
     setError("");
-    if (otp.length < 6) {
-      setError("Enter the 6-digit code we sent you.");
-      return;
-    }
+    if (otp.length < 6) { setError("Enter the 6-digit code we sent you."); return; }
     setLoading(true);
     try {
       const res = await fetch("/api/auth/otp/verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone, token: otp }),
+        body: JSON.stringify({ email: email.trim(), token: otp }),
       });
       if (!res.ok) throw new Error((await res.json()).error ?? "Invalid code");
-      const { isNew } = await res.json();
-      // Returning candidate — go to their dashboard
-      if (!isNew) {
-        router.push("/dashboard");
-        return;
-      }
-      setStep("cv");
+      router.push("/dashboard");
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Something went wrong");
     } finally {
@@ -115,56 +101,12 @@ function JoinPageInner() {
     }
   };
 
-  /* ── Step 4: upload CV ────────────────────────────────────────────────── */
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setCvDragging(false);
-    const file = e.dataTransfer.files[0];
-    if (file && file.type === "application/pdf") {
-      setCvFile(file);
-    } else {
-      setError("Please drop a PDF file.");
-    }
-  }, []);
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) setCvFile(file);
-  };
-
-  const handleCvUpload = async () => {
-    if (!cvFile) {
-      setError("Please select your CV first.");
-      return;
-    }
-    setError("");
-    setLoading(true);
-    try {
-      const form = new FormData();
-      form.append("cv", cvFile);
-      form.append("track", track!);
-
-      const res = await fetch("/api/candidate/cv-upload", {
-        method: "POST",
-        body: form,
-      });
-      if (!res.ok) throw new Error((await res.json()).error ?? "Upload failed");
-      const { candidateId } = await res.json();
-      router.push(`/profile/${candidateId}/gaps`);
-    } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : "Something went wrong");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  /* ── Progress indicator ───────────────────────────────────────────────── */
-  const STEP_ORDER: Step[] = ["track", "phone", "otp", "cv"];
+  /* ── Progress ─────────────────────────────────────────────────────────── */
+  const STEP_ORDER: Step[] = ["track", "details", "otp"];
   const stepIndex = STEP_ORDER.indexOf(step);
 
   return (
     <div className="min-h-screen bg-cream flex flex-col">
-      {/* Minimal header */}
       <header className="px-6 py-5 flex items-center justify-between border-b border-mist">
         <OleraLockupH size={26} />
         <span className="text-xs text-moss font-mono">Free for candidates</span>
@@ -178,10 +120,8 @@ function JoinPageInner() {
               key={s}
               className={cn(
                 "rounded-full transition-all duration-300",
-                i === stepIndex
-                  ? "w-8 h-2.5 bg-amber"
-                  : i < stepIndex
-                  ? "w-2.5 h-2.5 bg-sage"
+                i === stepIndex ? "w-8 h-2.5 bg-amber"
+                  : i < stepIndex ? "w-2.5 h-2.5 bg-sage"
                   : "w-2.5 h-2.5 bg-mist"
               )}
               aria-current={i === stepIndex ? "step" : undefined}
@@ -198,10 +138,9 @@ function JoinPageInner() {
                   What's your area?
                 </h1>
                 <p className="text-moss">
-                  Choose the track that best matches your experience. You can always update it later.
+                  Choose the track that best matches your experience.
                 </p>
               </div>
-
               <div className="space-y-3">
                 {TRACKS.map((t) => (
                   <button
@@ -224,10 +163,7 @@ function JoinPageInner() {
                         <div className="font-semibold text-char">{t.label}</div>
                         <div className="text-xs text-moss mt-0.5">{t.description}</div>
                       </div>
-                      <ArrowRight
-                        size={16}
-                        className="text-mist group-hover:text-amber transition-colors"
-                      />
+                      <ArrowRight size={16} className="text-mist group-hover:text-amber transition-colors" />
                     </div>
                   </button>
                 ))}
@@ -235,51 +171,53 @@ function JoinPageInner() {
             </div>
           )}
 
-          {/* ── STEP: Phone ─────────────────────────────────────────────── */}
-          {step === "phone" && (
+          {/* ── STEP: Details ────────────────────────────────────────────── */}
+          {step === "details" && (
             <div>
               <div className="mb-8">
-                <div className="w-12 h-12 rounded-full bg-forest/10 flex items-center justify-center mb-4">
-                  <Phone size={20} className="text-forest" />
+                <div className="w-12 h-12 rounded-full bg-amber/10 flex items-center justify-center mb-4">
+                  <Mail size={20} className="text-amber" />
                 </div>
                 <h1 className="font-display font-bold text-3xl text-char mb-2">
-                  What's your number?
+                  Let's get you in
                 </h1>
                 <p className="text-moss">
-                  We'll send you a 6-digit code via SMS to verify it's you. No password needed.
+                  We'll send a code to your email. No password needed.
                 </p>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-3">
                 <Input
-                  label="Phone number"
-                  type="tel"
-                  placeholder="+254 700 000 000"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
+                  label="Your name"
+                  type="text"
+                  placeholder="Ada Okonkwo"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleSendOtp()}
-                  hint="Include your country code, e.g. +254 for Kenya"
-                  error={error}
                   required
                   autoFocus
                 />
-
-                <Button
-                  variant="primary"
-                  size="lg"
-                  fullWidth
-                  loading={loading}
-                  onClick={handleSendOtp}
-                >
+                <Input
+                  label="Email address"
+                  type="email"
+                  placeholder="ada@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleSendOtp()}
+                  error={error}
+                  required
+                />
+                <Button variant="primary" size="lg" fullWidth loading={loading} onClick={handleSendOtp}>
                   Send verification code
                 </Button>
-
-                <button
-                  className="text-sm text-moss hover:text-char transition-colors w-full text-center"
-                  onClick={() => { setStep("track"); setError(""); }}
-                >
-                  ← Back
-                </button>
+                {track && (
+                  <button
+                    className="text-sm text-moss hover:text-char transition-colors w-full text-center"
+                    onClick={() => { setStep("track"); setError(""); }}
+                  >
+                    ← Back
+                  </button>
+                )}
               </div>
             </div>
           )}
@@ -292,10 +230,11 @@ function JoinPageInner() {
                   <ShieldCheck size={20} className="text-sage" />
                 </div>
                 <h1 className="font-display font-bold text-3xl text-char mb-2">
-                  Enter the code
+                  Check your email
                 </h1>
                 <p className="text-moss">
-                  We sent a 6-digit code to <span className="font-medium text-char">{phone}</span>.
+                  We sent a code to <span className="font-medium text-char">{email}</span>.
+                  It may take a minute.
                 </p>
               </div>
 
@@ -314,7 +253,6 @@ function JoinPageInner() {
                   autoFocus
                   className="text-center text-2xl font-mono tracking-widest"
                 />
-
                 <Button
                   variant="primary"
                   size="lg"
@@ -325,13 +263,12 @@ function JoinPageInner() {
                 >
                   Verify and continue
                 </Button>
-
                 <div className="flex items-center justify-between text-sm">
                   <button
                     className="text-moss hover:text-char transition-colors"
-                    onClick={() => { setStep("phone"); setError(""); setOtp(""); }}
+                    onClick={() => { setStep("details"); setError(""); setOtp(""); }}
                   >
-                    ← Wrong number?
+                    ← Wrong email?
                   </button>
                   <button
                     className="text-amber hover:text-terra transition-colors font-medium"
@@ -343,105 +280,9 @@ function JoinPageInner() {
               </div>
             </div>
           )}
-
-          {/* ── STEP: CV Upload ─────────────────────────────────────────── */}
-          {step === "cv" && (
-            <div>
-              <div className="mb-8">
-                <div className="w-12 h-12 rounded-full bg-amber/10 flex items-center justify-center mb-4">
-                  <Upload size={20} className="text-amber" />
-                </div>
-                <h1 className="font-display font-bold text-3xl text-char mb-2">
-                  Upload your CV
-                </h1>
-                <p className="text-moss">
-                  We'll extract your experience automatically. Takes less than 60 seconds.
-                </p>
-              </div>
-
-              <div className="space-y-4">
-                {/* Drop zone */}
-                <div
-                  onDragOver={(e) => { e.preventDefault(); setCvDragging(true); }}
-                  onDragLeave={() => setCvDragging(false)}
-                  onDrop={handleDrop}
-                  className={cn(
-                    "border-2 border-dashed rounded-2xl p-8 text-center transition-all duration-150 cursor-pointer",
-                    "hover:border-amber hover:bg-amber/5",
-                    cvDragging ? "border-amber bg-amber/10 scale-[1.01]" : "border-mist bg-white",
-                    cvFile && "border-sage bg-sage/5"
-                  )}
-                  onClick={() => document.getElementById("cv-input")?.click()}
-                  role="button"
-                  tabIndex={0}
-                  aria-label="Upload CV — click or drag a PDF"
-                  onKeyDown={(e) => e.key === "Enter" && document.getElementById("cv-input")?.click()}
-                >
-                  <input
-                    id="cv-input"
-                    type="file"
-                    accept=".pdf"
-                    className="hidden"
-                    onChange={handleFileChange}
-                  />
-
-                  {cvFile ? (
-                    <div className="flex flex-col items-center gap-2">
-                      <FileText size={36} className="text-sage" />
-                      <p className="font-medium text-char">{cvFile.name}</p>
-                      <p className="text-xs text-moss">
-                        {(cvFile.size / 1024 / 1024).toFixed(1)} MB · PDF
-                      </p>
-                      <button
-                        className="text-xs text-terra hover:text-terra/80 transition-colors"
-                        onClick={(e) => { e.stopPropagation(); setCvFile(null); }}
-                      >
-                        Remove
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="flex flex-col items-center gap-3">
-                      <div className="w-16 h-16 rounded-2xl bg-cream flex items-center justify-center">
-                        <Upload size={28} className="text-moss" />
-                      </div>
-                      <div>
-                        <p className="font-medium text-char">
-                          Drop your CV here
-                        </p>
-                        <p className="text-sm text-moss mt-1">
-                          or click to browse — PDF only, max 10MB
-                        </p>
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {error && (
-                  <p className="text-sm text-terra text-center">{error}</p>
-                )}
-
-                <Button
-                  variant="primary"
-                  size="lg"
-                  fullWidth
-                  loading={loading}
-                  disabled={!cvFile}
-                  onClick={handleCvUpload}
-                >
-                  Build my profile
-                  <ArrowRight size={18} />
-                </Button>
-
-                <p className="text-xs text-center text-moss/70">
-                  Your CV is stored securely and only shared with employers you approve.
-                </p>
-              </div>
-            </div>
-          )}
         </div>
       </div>
 
-      {/* Bottom bar — brand accent */}
       <div className="h-1 bg-gradient-to-r from-forest via-amber to-terra" aria-hidden="true" />
     </div>
   );

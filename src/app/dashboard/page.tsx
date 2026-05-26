@@ -1,55 +1,277 @@
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createServiceClient } from "@/lib/supabase/server";
+import { OleraLockupH } from "@/components/brand/Mark";
+import { Button } from "@/components/ui/Button";
+import { Footer } from "@/components/layout/Footer";
+import { ArrowRight, CheckCircle, Circle, Upload, ClipboardList, Star, Eye } from "lucide-react";
+import Link from "next/link";
 
-/**
- * Candidate dashboard — smart re-entry point.
- *
- * Logged-in candidates land here and are redirected to the right
- * step in their pathway based on their current status.
- *
- * Not logged in → /join
- */
-export default async function DashboardPage() {
-  const supabase = await createClient();
+/* ─── Pathway steps ─────────────────────────────────────────────────────── */
+const PATHWAY = [
+  { key: "profile",  n: "01", label: "Profile Built" },
+  { key: "assessed", n: "02", label: "Assessed" },
+  { key: "employer", n: "03", label: "Employer Ready" },
+  { key: "remote",   n: "04", label: "Remote Ready" },
+];
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+function getPathwayIndex(status: string, readiness: string) {
+  if (readiness === "remote_ready") return 3;
+  if (readiness === "ready")        return 2;
+  if (status === "assessed")        return 1;
+  return 0;
+}
 
-  if (!user) {
-    redirect("/join");
+/* ─── Next action config ────────────────────────────────────────────────── */
+interface NextAction {
+  icon: React.ReactNode;
+  heading: string;
+  body: string;
+  cta: string;
+  href: string;
+}
+
+function getNextAction(
+  status: string,
+  readiness: string,
+  candidateId: string,
+  profileSlug?: string | null,
+): NextAction {
+  if (status === "joined" || !status) {
+    return {
+      icon: <Upload size={22} className="text-amber" />,
+      heading: "Upload your CV",
+      body: "We'll extract your experience and build your profile automatically. Takes less than a minute.",
+      cta: "Upload CV",
+      href: "/upload",
+    };
   }
+  if (status === "cv_uploaded") {
+    return {
+      icon: <ClipboardList size={22} className="text-amber" />,
+      heading: "Complete your profile",
+      body: "Review what we extracted and fill in a few quick details so employers get the full picture.",
+      cta: "Complete profile",
+      href: `/profile/${candidateId}/gaps`,
+    };
+  }
+  if (status === "gaps_filled") {
+    return {
+      icon: <Star size={22} className="text-amber" />,
+      heading: "Show your work",
+      body: "Help employers understand how you think, communicate, and handle real customer situations.",
+      cta: "Show your work",
+      href: `/assessment/${candidateId}`,
+    };
+  }
+  if (status === "assessed" && readiness === "developing") {
+    return {
+      icon: <ClipboardList size={22} className="text-moss" />,
+      heading: "Keep building",
+      body: "Review your feedback below and strengthen your profile before reapplying.",
+      cta: "View feedback",
+      href: `/profile/${candidateId}/review`,
+    };
+  }
+  if (status === "assessed" || readiness === "near_ready") {
+    return {
+      icon: <Circle size={22} className="text-amber" />,
+      heading: "Under review",
+      body: "Our team is reviewing your profile. We may reach out with a few questions before activating it.",
+      cta: "View your profile",
+      href: `/profile/${candidateId}/review`,
+    };
+  }
+  if (readiness === "ready" || readiness === "remote_ready") {
+    return {
+      icon: <Eye size={22} className="text-sage" />,
+      heading: "You're visible to employers",
+      body: "Your profile is active and being matched to live roles. We'll be in touch when there's a fit.",
+      cta: profileSlug ? "View public profile" : "View your profile",
+      href: profileSlug ? `/p/${profileSlug}` : `/profile/${candidateId}/review`,
+    };
+  }
+  return {
+    icon: <Upload size={22} className="text-amber" />,
+    heading: "Upload your CV",
+    body: "We'll extract your experience and build your profile automatically.",
+    cta: "Upload CV",
+    href: "/upload",
+  };
+}
 
-  // Look up the candidate record for this user
+/* ─── Page ──────────────────────────────────────────────────────────────── */
+export default async function DashboardPage() {
+  const supabaseAuth = await createClient();
+  const { data: { user } } = await supabaseAuth.auth.getUser();
+
+  if (!user) redirect("/join");
+
+  // Fetch candidate — use service client so RLS doesn't block
+  const supabase = createServiceClient();
   const { data: candidate } = await supabase
     .from("candidates")
-    .select("id, status")
+    .select("id, full_name, email, track, status, readiness, profile_completeness, profile_slug, assessment_score, assessment_tier")
     .eq("user_id", user.id)
     .order("created_at", { ascending: false })
     .limit(1)
     .single();
 
-  if (!candidate) {
-    // No profile yet — send them to upload their CV
-    redirect("/join");
-  }
+  if (!candidate) redirect("/join");
 
-  const { id, status } = candidate;
+  const firstName = (candidate.full_name || user.user_metadata?.full_name || "there")
+    .split(" ")[0];
 
-  // Route to the right step
-  switch (status) {
-    case "cv_uploaded":
-      // Profile built — fill in gaps
-      redirect(`/profile/${id}/gaps`);
+  const status    = candidate.status    ?? "joined";
+  const readiness = candidate.readiness ?? "unscreened";
+  const pathwayIndex = getPathwayIndex(status, readiness);
+  const nextAction = getNextAction(status, readiness, candidate.id, candidate.profile_slug);
 
-    case "gaps_filled":
-      // Gaps done — complete the practical tasks
-      redirect(`/assessment/${id}`);
+  const TRACK_LABELS: Record<string, string> = {
+    support:   "Customer Support",
+    success:   "Customer Success",
+    assistant: "Virtual / Executive Assistant",
+  };
 
-    case "assessed":
-    case "active":
-    default:
-      // Pathway complete — show their profile/status
-      redirect(`/profile/${id}/review`);
-  }
+  return (
+    <div className="min-h-screen bg-cream">
+      {/* Header */}
+      <header className="px-6 py-4 flex items-center justify-between border-b border-mist/60 bg-cream/90 backdrop-blur-sm sticky top-0 z-10">
+        <OleraLockupH size={26} />
+        <Link href={`/profile/${candidate.id}/review`} className="text-xs text-moss hover:text-char transition-colors font-mono">
+          My profile →
+        </Link>
+      </header>
+
+      <div className="max-w-lg mx-auto px-4 py-10 sm:py-14">
+
+        {/* Greeting */}
+        <div className="mb-10">
+          <p className="text-sm font-mono text-moss/70 mb-1">
+            {TRACK_LABELS[candidate.track] ?? "Candidate"}
+          </p>
+          <h1 className="font-display font-bold text-3xl sm:text-4xl text-char leading-tight">
+            Hi {firstName} 👋
+          </h1>
+          <p className="text-moss mt-2 text-base">
+            Here&apos;s where you are on your pathway.
+          </p>
+        </div>
+
+        {/* Pathway stepper */}
+        <div className="mb-10">
+          <div className="flex items-start gap-0">
+            {PATHWAY.map((step, i) => {
+              const done    = i < pathwayIndex;
+              const current = i === pathwayIndex;
+              const isLast  = i === PATHWAY.length - 1;
+
+              return (
+                <div key={step.key} className="flex-1 min-w-0 flex flex-col items-center">
+                  {/* Connector line + dot row */}
+                  <div className="flex items-center w-full">
+                    {/* Left line */}
+                    <div className={[
+                      "flex-1 h-0.5",
+                      i === 0 ? "invisible" : done || current ? "bg-sage" : "bg-mist",
+                    ].join(" ")} />
+                    {/* Dot */}
+                    <div className={[
+                      "w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0 transition-all",
+                      done    ? "bg-sage text-cream"   : "",
+                      current ? "bg-amber text-cream ring-4 ring-amber/20" : "",
+                      !done && !current ? "bg-mist text-moss/40" : "",
+                    ].join(" ")}>
+                      {done
+                        ? <CheckCircle size={14} strokeWidth={2.5} />
+                        : <span className="text-[10px] font-mono font-bold">{step.n}</span>
+                      }
+                    </div>
+                    {/* Right line */}
+                    <div className={[
+                      "flex-1 h-0.5",
+                      isLast ? "invisible" : done ? "bg-sage" : "bg-mist",
+                    ].join(" ")} />
+                  </div>
+                  {/* Label */}
+                  <p className={[
+                    "text-[10px] font-medium text-center mt-1.5 leading-tight px-1",
+                    done    ? "text-sage"         : "",
+                    current ? "text-char font-semibold" : "",
+                    !done && !current ? "text-moss/40" : "",
+                  ].join(" ")}>
+                    {step.label}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* What's next card */}
+        <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm mb-6">
+          <p className="text-xs font-mono text-moss/60 uppercase tracking-widest mb-4">
+            What to do next
+          </p>
+          <div className="flex items-start gap-4">
+            <div className="w-10 h-10 rounded-2xl bg-amber/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+              {nextAction.icon}
+            </div>
+            <div className="flex-1 min-w-0">
+              <h2 className="font-semibold text-char text-lg mb-1.5 leading-snug">
+                {nextAction.heading}
+              </h2>
+              <p className="text-sm text-moss leading-relaxed mb-5">
+                {nextAction.body}
+              </p>
+              <Button
+                variant="primary"
+                size="md"
+                as="a"
+                href={nextAction.href}
+              >
+                {nextAction.cta}
+                <ArrowRight size={16} />
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Assessment feedback — only if assessed and has score */}
+        {candidate.assessment_score !== null && candidate.assessment_score !== undefined && (
+          <div className="bg-white/60 rounded-2xl p-5 mb-6">
+            <p className="text-xs font-mono text-moss/60 uppercase tracking-widest mb-3">
+              Your result
+            </p>
+            <div className="flex items-center gap-4">
+              <div>
+                <p className="font-display font-bold text-3xl text-char">
+                  {candidate.assessment_score}
+                  <span className="text-moss font-normal text-base">/100</span>
+                </p>
+                <p className="text-xs text-moss mt-0.5 capitalize">
+                  {candidate.assessment_tier === "pass" ? "Strong result"
+                    : candidate.assessment_tier === "borderline" ? "Under review"
+                    : "Keep building"}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Quiet links */}
+        <div className="flex items-center gap-4 text-sm text-moss/60">
+          <Link href={`/profile/${candidate.id}/review`} className="hover:text-moss transition-colors">
+            Full profile
+          </Link>
+          <span>·</span>
+          <Link href="/contact" className="hover:text-moss transition-colors">
+            Get help
+          </Link>
+        </div>
+
+      </div>
+
+      <Footer />
+    </div>
+  );
 }

@@ -1,36 +1,50 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createServiceClient } from "@/lib/supabase/server";
 
 export async function POST(req: NextRequest) {
   try {
-    const { phone, token } = await req.json();
+    const { email, token } = await req.json();
 
-    if (!phone || !token) {
-      return NextResponse.json({ error: "Phone and token required" }, { status: 400 });
+    if (!email || !token) {
+      return NextResponse.json({ error: "Email and token required" }, { status: 400 });
     }
 
-    const supabase = await createClient();
-
-    const { data, error } = await supabase.auth.verifyOtp({
-      phone,
+    // Verify the OTP — cookie-aware client writes the session cookie
+    const supabaseAuth = await createClient();
+    const { data, error } = await supabaseAuth.auth.verifyOtp({
+      email: email.trim().toLowerCase(),
       token,
-      type: "sms",
+      type: "email",
     });
 
     if (error || !data.user) {
       return NextResponse.json({ error: "Invalid or expired code" }, { status: 400 });
     }
 
-    // Check if candidate record exists, create if not
+    const user = data.user;
+
+    // Create initial candidate record for new users (service client bypasses RLS)
+    const supabase = createServiceClient();
     const { data: existing } = await supabase
       .from("candidates")
       .select("id")
-      .eq("user_id", data.user.id)
+      .eq("user_id", user.id)
       .single();
+
+    if (!existing) {
+      await supabase.from("candidates").insert({
+        user_id: user.id,
+        email: user.email ?? email,
+        full_name: user.user_metadata?.full_name ?? "",
+        phone: "",
+        status: "joined",
+        readiness: "unscreened",
+        profile_completeness: 10,
+      });
+    }
 
     return NextResponse.json({
       success: true,
-      userId: data.user.id,
       isNew: !existing,
     });
   } catch (err) {
