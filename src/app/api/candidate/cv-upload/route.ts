@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createServiceClient } from "@/lib/supabase/server";
+import { createClient, createServiceClient } from "@/lib/supabase/server";
 import Anthropic from "@anthropic-ai/sdk";
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! });
@@ -35,9 +35,12 @@ Rules:
 
 export async function POST(req: NextRequest) {
   try {
-    // Auth check
-    const supabase = await createServiceClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    // Auth check — use cookie-aware client so the session is read correctly
+    const supabaseAuth = await createClient();
+    const { data: { user }, error: authError } = await supabaseAuth.auth.getUser();
+
+    // Service client — plain supabase-js, no cookie injection, bypasses RLS
+    const supabase = createServiceClient();
 
     if (authError || !user) {
       return NextResponse.json({ error: "Unauthorised" }, { status: 401 });

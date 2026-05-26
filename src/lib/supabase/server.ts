@@ -1,4 +1,5 @@
 import { createServerClient } from "@supabase/ssr";
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 
 function getCookieHandlers() {
@@ -46,26 +47,16 @@ export async function createClient(): Promise<ReturnType<typeof createServerClie
   );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function createServiceClient(): Promise<ReturnType<typeof createServerClient<any>>> {
-  const cookieStore = await cookies();
-
-  return createServerClient(
+// Service-role client — uses plain supabase-js (no cookie injection) so the
+// service_role JWT is used as the Authorization header and RLS is fully bypassed.
+export function createServiceClient() {
+  return createSupabaseClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
     {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll();
-        },
-        setAll(cookiesToSet) {
-          try {
-            cookiesToSet.forEach(({ name, value, options }) =>
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              cookieStore.set(name, value, options as any)
-            );
-          } catch { /* Server component */ }
-        },
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
       },
     }
   );
