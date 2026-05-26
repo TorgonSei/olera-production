@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { OleraLockupH, Olera3A, COLORS } from "@/components/brand/Mark";
 import { Button } from "@/components/ui/Button";
@@ -35,6 +35,14 @@ type Step = "track" | "phone" | "otp" | "cv";
 
 /* ─── Page ──────────────────────────────────────────────────────────────── */
 export default function JoinPage() {
+  return (
+    <Suspense>
+      <JoinPageInner />
+    </Suspense>
+  );
+}
+
+function JoinPageInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialTrack = (searchParams.get("track") as Track) ?? null;
