@@ -181,7 +181,7 @@ export default async function ProfileReviewPage({
           )}
 
           {/* Key details */}
-          <div className="grid grid-cols-2 gap-4 py-4 border-t border-mist">
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 py-4 border-t border-mist">
             {candidate.years_experience !== null && (
               <div>
                 <p className="text-xs font-mono text-moss/60 uppercase tracking-widest mb-1">Experience</p>

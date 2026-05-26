@@ -189,7 +189,7 @@ export default function HomePage() {
                     <div
                       key={s.label}
                       className={[
-                        "rounded-2xl p-6 flex flex-col gap-1",
+                        "rounded-2xl p-4 sm:p-6 flex flex-col gap-1",
                         isGreen
                           ? "bg-forest border border-forest"
                           : isDeep
@@ -199,7 +199,7 @@ export default function HomePage() {
                     >
                       <span
                         className={[
-                          "font-display font-bold text-4xl tracking-tight",
+                          "font-display font-bold text-3xl sm:text-4xl tracking-tight",
                           isGreen || isDeep ? "text-cream" : "text-char",
                         ].join(" ")}
                       >
@@ -325,19 +325,19 @@ export default function HomePage() {
         </section>
 
         {/* ── How it works — 4 steps ────────────────────────────────────── */}
-        <section id="how-it-works" className="py-20 bg-cream">
+        <section id="how-it-works" className="py-14 sm:py-20 bg-cream">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="mb-12">
+            <div className="mb-10 sm:mb-12">
               <p className="text-xs font-mono text-moss/60 uppercase tracking-widest mb-3">
                 How it works
               </p>
-              <h2 className="font-display font-bold text-4xl sm:text-5xl text-char">
+              <h2 className="font-display font-bold text-3xl sm:text-4xl lg:text-5xl text-char">
                 Start with your CV.{" "}
                 <span className="text-amber">We ask for the rest.</span>
               </h2>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
               {STEPS.map((step, i) => (
                 <div key={step.n} className="relative">
                   {i < STEPS.length - 1 && (

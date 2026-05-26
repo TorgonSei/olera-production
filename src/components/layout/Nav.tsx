@@ -29,11 +29,12 @@ export function Nav({ variant = "light", className }: NavProps) {
         <OleraLockupH size={28} reversed={isDark} />
       </Link>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3 sm:gap-4">
         <Link
           href="/employer"
           className={cn(
-            "text-sm font-medium hidden sm:block transition-colors",
+            "text-sm font-medium transition-colors",
+            "hidden sm:block",
             isDark
               ? "text-cream/70 hover:text-cream"
               : "text-moss hover:text-char"
@@ -42,7 +43,8 @@ export function Nav({ variant = "light", className }: NavProps) {
           Hire talent
         </Link>
         <Button variant={isDark ? "primary" : "dark"} size="sm" as="a" href="/join">
-          Get started
+          <span className="sm:hidden">Join</span>
+          <span className="hidden sm:inline">Get started</span>
         </Button>
       </div>
     </nav>

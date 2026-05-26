@@ -303,7 +303,7 @@ export default function AssessmentPage() {
               value={writtenResponse}
               onChange={(e) => setWrittenResponse(e.target.value)}
               placeholder="Write your response here..."
-              rows={12}
+              rows={8}
               className={cn(
                 "w-full rounded-2xl border-2 border-mist bg-white px-4 py-3",
                 "text-sm text-char placeholder:text-moss/50",
@@ -342,26 +342,26 @@ export default function AssessmentPage() {
         {/* ── SCENARIOS ────────────────────────────────────────────────── */}
         {step === "scenarios" && (
           <div>
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <p className="text-xs font-mono text-moss/60 uppercase tracking-widest mb-1">
+            <div className="mb-6">
+              <div className="flex items-center justify-between mb-1">
+                <p className="text-xs font-mono text-moss/60 uppercase tracking-widest">
                   Part 2 of 3 · Judgment · {currentScenario + 1} of {scenarios.length}
                 </p>
-                <h2 className="font-display font-bold text-2xl text-char">What would you do?</h2>
+                {/* Progress dots */}
+                <div className="flex gap-1.5">
+                  {scenarios.map((_, i) => (
+                    <div
+                      key={i}
+                      className={cn(
+                        "h-1.5 rounded-full transition-all",
+                        i < currentScenario ? "w-6 bg-sage" :
+                        i === currentScenario ? "w-8 bg-amber" : "w-6 bg-mist"
+                      )}
+                    />
+                  ))}
+                </div>
               </div>
-              {/* Progress */}
-              <div className="flex gap-1.5">
-                {scenarios.map((_, i) => (
-                  <div
-                    key={i}
-                    className={cn(
-                      "h-1.5 rounded-full transition-all",
-                      i < currentScenario ? "w-6 bg-sage" :
-                      i === currentScenario ? "w-8 bg-amber" : "w-6 bg-mist"
-                    )}
-                  />
-                ))}
-              </div>
+              <h2 className="font-display font-bold text-2xl text-char">What would you do?</h2>
             </div>
 
             <div className="p-5 bg-forest/5 border border-forest/10 rounded-2xl mb-6">
@@ -436,8 +436,8 @@ export default function AssessmentPage() {
               {tools.map((tool) => {
                 const rating = toolRatings[tool] ?? 0;
                 return (
-                  <div key={tool} className="flex items-center justify-between p-3 bg-white rounded-xl border border-mist">
-                    <span className="font-medium text-sm text-char w-28 flex-shrink-0">{tool}</span>
+                  <div key={tool} className="p-3 bg-white rounded-xl border border-mist">
+                    <span className="font-medium text-sm text-char block mb-2">{tool}</span>
                     <div className="flex gap-1.5">
                       {["Never used", "Basic", "Proficient", "Expert"].map((label, i) => (
                         <button
@@ -445,7 +445,7 @@ export default function AssessmentPage() {
                           onClick={() => rateTools(tool, i)}
                           title={label}
                           className={cn(
-                            "px-2.5 py-1 rounded-lg text-xs font-medium transition-all border",
+                            "flex-1 py-2 rounded-lg text-xs font-medium transition-all border text-center",
                             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber/40",
                             rating === i
                               ? i === 0

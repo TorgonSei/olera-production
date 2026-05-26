@@ -172,17 +172,17 @@ function JoinPageInner() {
 
       <div className="flex-1 flex flex-col items-center justify-center px-4 py-12">
         {/* Progress dots */}
-        <div className="flex items-center gap-2 mb-10" aria-label="Onboarding progress">
+        <div className="flex items-center gap-2 mb-8" aria-label="Onboarding progress">
           {STEP_ORDER.map((s, i) => (
             <div
               key={s}
               className={cn(
                 "rounded-full transition-all duration-300",
                 i === stepIndex
-                  ? "w-6 h-2 bg-amber"
+                  ? "w-8 h-2.5 bg-amber"
                   : i < stepIndex
-                  ? "w-2 h-2 bg-sage"
-                  : "w-2 h-2 bg-mist"
+                  ? "w-2.5 h-2.5 bg-sage"
+                  : "w-2.5 h-2.5 bg-mist"
               )}
               aria-current={i === stepIndex ? "step" : undefined}
             />
