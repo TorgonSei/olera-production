@@ -238,10 +238,10 @@ export default function AssessmentPage() {
         {step === "intro" && (
           <div>
             <p className="text-xs font-mono text-moss/60 uppercase tracking-widest mb-4">
-              Step 3 of 3 · Skills assessment
+              Step 3 of 3 · Show your work
             </p>
             <h1 className="font-display font-bold text-3xl text-char mb-4">
-              Almost there — one quick assessment.
+              Almost there — now show your work.
             </h1>
             <p className="text-moss text-lg mb-8">
               This is how employers see your actual capability, not just your CV. It takes about 20 minutes and covers three parts.
@@ -274,7 +274,7 @@ export default function AssessmentPage() {
             </div>
 
             <Button variant="primary" size="lg" fullWidth onClick={() => setStep("written")}>
-              Start assessment
+              Begin
               <ChevronRight size={18} />
             </Button>
           </div>
@@ -476,7 +476,7 @@ export default function AssessmentPage() {
               loading={loading}
               onClick={handleSubmit}
             >
-              Submit assessment
+              Submit
               <ChevronRight size={18} />
             </Button>
 
@@ -493,14 +493,14 @@ export default function AssessmentPage() {
               <Check size={36} className="text-sage" />
             </div>
             <h1 className="font-display font-bold text-3xl text-char mb-3">
-              Assessment complete.
+              Done — your work is in.
             </h1>
             <p className="text-moss text-lg mb-6 max-w-sm mx-auto">
-              Our team will review your profile and let you know when you're active in the pool. Typically within 48 hours.
+              Our team will review your responses and update your readiness level. Usually within 48 hours.
             </p>
             <div className="p-4 bg-amber/10 rounded-2xl border border-amber/20 mb-8 max-w-sm mx-auto">
               <p className="text-sm text-char">
-                <span className="font-semibold">What happens next:</span> We score your responses, classify your readiness, and start matching you to relevant roles.
+                <span className="font-semibold">What happens next:</span> We review your responses, set your readiness level, and start matching you to relevant roles.
               </p>
             </div>
             <Button

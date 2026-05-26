@@ -122,7 +122,7 @@ export default function GapsPage() {
         {/* Title */}
         <div className="mb-10">
           <p className="text-xs font-mono text-moss/60 uppercase tracking-widest mb-2">
-            Step 2 of 3 · Profile gaps
+            Step 2 of 3 · Complete your profile
           </p>
           <h1 className="font-display font-bold text-3xl text-char mb-2">
             A few quick details
@@ -291,12 +291,12 @@ export default function GapsPage() {
             loading={loading}
             onClick={handleSubmit}
           >
-            Continue to assessment
+            Show your work
             <ArrowRight size={18} />
           </Button>
 
           <p className="text-xs text-center text-moss/60">
-            Next: a 20-minute skills assessment tailored to your track
+            Next: short practical tasks showing your communication, judgment, and work style
           </p>
         </div>
       </div>

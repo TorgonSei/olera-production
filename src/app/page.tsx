@@ -5,17 +5,55 @@ import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/Button";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
-import { Olera3A, Olera3AGraduated, OleraFitCategory, COLORS } from "@/components/brand/Mark";
-import { ArrowRight, Upload, Star, Globe, CheckCircle } from "lucide-react";
+import {
+  Olera3A,
+  Olera3AGraduated,
+  OleraFitCategory,
+  COLORS,
+} from "@/components/brand/Mark";
+import {
+  ArrowRight,
+  Upload,
+  FileText,
+  ClipboardList,
+  Users,
+  Globe,
+  CheckCircle,
+} from "lucide-react";
 
-/* ─── Track definitions ─────────────────────────────────────────────────── */
+/* ─── Candidate FAQ ──────────────────────────────────────────────────────── */
+const CANDIDATE_FAQ = [
+  {
+    q: "Do I need experience?",
+    a: "It depends on the role. The practical tasks are how we understand what you can actually do — not just what your CV says.",
+  },
+  {
+    q: "Is it free?",
+    a: "Yes. Candidates do not pay to join, apply, or be matched. Ever.",
+  },
+  {
+    q: "What happens after I upload my CV?",
+    a: "We build your profile, ask for a few missing details, then you complete short practical tasks to show your communication, judgment, and work style. Most candidates move through the full pathway in a few days.",
+  },
+  {
+    q: "Will employers see my contact details?",
+    a: "No. Your phone number and email stay protected until there is an active hiring process and the right steps are completed.",
+  },
+  {
+    q: "What if I am not ready yet?",
+    a: "You still get a profile and clear feedback. We show you exactly what to improve. Not everyone reaches Employer Ready on the first pass — that is expected.",
+  },
+];
+
+/* ─── Role tracks ────────────────────────────────────────────────────────── */
 const TRACKS = [
   {
     id: "support",
     title: "Customer Support",
     icon: "🎧",
-    roles: ["Support Specialist", "Technical Support", "Chat Support Lead"],
-    description: "Frontline resolution experts. Fast, empathetic, precise.",
+    roles: ["Email Support", "Chat Support", "Contact Centre Agent", "Client Service Officer"],
+    description:
+      "For people who can respond clearly, stay calm, and help customers solve problems.",
     color: COLORS.amber,
     bg: "#fef5ec",
   },
@@ -23,8 +61,9 @@ const TRACKS = [
     id: "success",
     title: "Customer Success",
     icon: "📈",
-    roles: ["CSM", "Onboarding Specialist", "Renewals Manager"],
-    description: "Retention architects. They grow accounts and reduce churn.",
+    roles: ["Customer Success Associate", "Account Support", "Onboarding Support", "Retention Support"],
+    description:
+      "For people who can follow up with customers, support accounts, and help clients get value from a product or service.",
     color: COLORS.sage,
     bg: "#f0f4f0",
   },
@@ -32,40 +71,47 @@ const TRACKS = [
     id: "assistant",
     title: "Virtual & Executive Assistant",
     icon: "⚡",
-    roles: ["Executive Assistant", "Operations Coordinator", "Project VA"],
-    description: "High-leverage operators. Multiply leadership capacity.",
+    roles: ["Virtual Assistant", "Executive Assistant", "Remote Admin Support", "Operations Assistant"],
+    description:
+      "For people who can organize information, manage tasks, communicate well, and help busy teams move faster.",
     color: COLORS.terra,
     bg: "#fdf1ee",
   },
 ] as const;
 
-/* ─── Social proof numbers ──────────────────────────────────────────────── */
+/* ─── Stats bar ──────────────────────────────────────────────────────────── */
 const STATS = [
-  { value: "48h", label: "Avg. time to shortlist" },
-  { value: "94%", label: "Employer satisfaction" },
-  { value: "0", label: "Candidate fee — ever" },
-  { value: "3", label: "Role tracks, one platform" },
+  { value: "48h", label: "Shortlist delivered" },
+  { value: "3–5", label: "Candidates per shortlist" },
+  { value: "0", label: "Candidate fees. Ever." },
+  { value: "60-day", label: "Replacement guarantee" },
 ];
 
-/* ─── How it works steps ────────────────────────────────────────────────── */
+/* ─── 4-step process ─────────────────────────────────────────────────────── */
 const STEPS = [
   {
     n: "01",
     title: "Upload your CV",
-    body: "Drop your PDF. Our system reads it, extracts your experience, and builds your profile in under a minute.",
+    body: "We read your CV and build your Olera profile automatically.",
     icon: <Upload size={20} />,
   },
   {
     n: "02",
-    title: "Complete your signal",
-    body: "Fill six quick gaps — salary range, availability, contract preference. Then take a 20-minute assessment.",
-    icon: <Star size={20} />,
+    title: "Complete your profile",
+    body: "Add your availability, pay expectations, tools, and whether you are open to remote or international work. Takes about 5 minutes.",
+    icon: <FileText size={20} />,
   },
   {
     n: "03",
-    title: "Get matched",
-    body: "We match you to live roles at international employers. When there's a fit, we handle the introduction — you just show up.",
-    icon: <CheckCircle size={20} />,
+    title: "Show your work",
+    body: "Complete short practical tasks — write a customer reply, handle a judgment scenario, organize some instructions. This is how we understand what you can actually do.",
+    icon: <ClipboardList size={20} />,
+  },
+  {
+    n: "04",
+    title: "Get matched to real roles",
+    body: "When your profile fits a live role, Olera introduces you. We do not send random applications.",
+    icon: <Users size={20} />,
   },
 ];
 
@@ -76,9 +122,9 @@ export default function HomePage() {
       <Nav />
 
       <main>
+
         {/* ── Hero ─────────────────────────────────────────────────────── */}
         <section className="relative overflow-hidden bg-cream">
-          {/* Background mark — large, ghost */}
           <div
             className="absolute top-0 right-0 opacity-5 pointer-events-none select-none"
             aria-hidden="true"
@@ -86,77 +132,141 @@ export default function HomePage() {
             <Olera3AGraduated size={480} color={COLORS.char} />
           </div>
 
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 sm:pt-28 sm:pb-24">
-            <div className="max-w-2xl">
-              {/* Eyebrow */}
-              <div className="flex items-center gap-3 mb-6">
-                <Badge variant="sage" dot>
-                  Now matching international roles
-                </Badge>
-                <Badge variant="sand">
-                  <Globe size={11} className="mr-1" />
-                  Nairobi · Remote
-                </Badge>
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-10 sm:pt-16 sm:pb-14">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+
+              {/* Left — copy */}
+              <div>
+                {/* Eyebrow */}
+                <div className="flex items-center gap-3 mb-5">
+                  <Badge variant="sage" dot>
+                    Remote roles · International employers
+                  </Badge>
+                  <Badge variant="sand">
+                    <Globe size={11} className="mr-1" />
+                    Nairobi · Kenya
+                  </Badge>
+                </div>
+
+                {/* Headline */}
+                <h1 className="font-display font-bold text-4xl sm:text-5xl lg:text-6xl text-char leading-[1.08] tracking-tight mb-5">
+                  Kenyan customer operations talent{" "}
+                  <span className="text-amber">for global teams.</span>
+                </h1>
+
+                {/* Sub-hero */}
+                <p className="text-base sm:text-lg text-moss leading-relaxed mb-8">
+                  Olera connects people who can support customers, manage details,
+                  communicate clearly, and work reliably with international
+                  companies. Upload your CV. We&apos;ll build your profile and
+                  match you when there is a fit.
+                </p>
+
+                {/* CTAs */}
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <Button size="lg" variant="primary" as="a" href="/join">
+                    Upload your CV
+                    <ArrowRight size={18} />
+                  </Button>
+                  <Button size="lg" variant="ghost" as="a" href="/employer">
+                    Hiring talent?
+                  </Button>
+                </div>
+
+                {/* Trust line */}
+                <p className="mt-5 text-sm text-moss/70 flex items-center gap-2">
+                  <CheckCircle size={14} className="text-sage flex-shrink-0" />
+                  Free for candidates · No spam · You control your profile
+                </p>
               </div>
 
-              {/* Headline */}
-              <h1 className="font-display font-bold text-5xl sm:text-6xl lg:text-7xl text-char leading-[1.05] tracking-tight mb-6">
-                Your customer ops career{" "}
-                <span className="text-amber">starts here.</span>
-              </h1>
-
-              <p className="text-lg sm:text-xl text-moss leading-relaxed mb-10 max-w-xl">
-                Olera connects exceptional customer support, success, and operations talent with the international teams that need them most. Free for candidates — always.
-              </p>
-
-              {/* Primary CTA */}
-              <div className="flex flex-col sm:flex-row gap-3">
-                <Button size="xl" variant="primary" as="a" href="/join">
-                  Upload your CV
-                  <ArrowRight size={20} />
-                </Button>
-                <Button size="xl" variant="ghost" as="a" href="#how-it-works">
-                  See how it works
-                </Button>
+              {/* Right — stats 2×2 */}
+              <div className="grid grid-cols-2 gap-4">
+                {STATS.map((s) => {
+                  const isGreen = s.label === "Candidate fees. Ever.";
+                  const isDeep  = s.label === "Replacement guarantee";
+                  return (
+                    <div
+                      key={s.label}
+                      className={[
+                        "rounded-2xl p-6 flex flex-col gap-1",
+                        isGreen
+                          ? "bg-forest border border-forest"
+                          : isDeep
+                          ? "bg-deep border border-deep"
+                          : "bg-white border border-mist",
+                      ].join(" ")}
+                    >
+                      <span
+                        className={[
+                          "font-display font-bold text-4xl tracking-tight",
+                          isGreen || isDeep ? "text-cream" : "text-char",
+                        ].join(" ")}
+                      >
+                        {s.value}
+                      </span>
+                      <span
+                        className={[
+                          "text-xs font-mono leading-snug",
+                          isGreen || isDeep ? "text-cream/55" : "text-moss/60",
+                        ].join(" ")}
+                      >
+                        {s.label}
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
 
-              {/* Trust signal */}
-              <p className="mt-6 text-sm text-moss/70 flex items-center gap-2">
-                <CheckCircle size={14} className="text-sage" />
-                Free to join · No recruiter spam · You control your profile
-              </p>
             </div>
           </div>
         </section>
 
-        {/* ── Stats bar ─────────────────────────────────────────────────── */}
-        <section className="bg-forest text-cream py-8">
+        {/* ── Can I apply? — candidate FAQ ──────────────────────────────── */}
+        <section className="py-20 bg-cream">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-0 md:divide-x md:divide-white/10">
-              {STATS.map((s) => (
-                <div key={s.label} className="flex flex-col items-center text-center px-4">
-                  <span className="font-display font-bold text-3xl text-amber mb-1">
-                    {s.value}
-                  </span>
-                  <span className="text-xs text-cream/50 font-mono">{s.label}</span>
+            <div className="mb-12">
+              <p className="text-xs font-mono text-moss/60 uppercase tracking-widest mb-3">
+                For candidates
+              </p>
+              <h2 className="font-display font-bold text-4xl sm:text-5xl text-char">
+                Can I apply?
+              </h2>
+              <p className="mt-4 text-moss text-lg max-w-xl">
+                Yes, if you are interested in customer operations work. Roles cover
+                customer support, email and chat support, customer success, virtual
+                assistant work, executive assistant work, and remote admin and
+                operations support.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {CANDIDATE_FAQ.map(({ q, a }) => (
+                <div
+                  key={q}
+                  className="bg-white border border-mist rounded-2xl p-6"
+                >
+                  <p className="font-semibold text-char mb-2">{q}</p>
+                  <p className="text-sm text-moss leading-relaxed">{a}</p>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* ── Tracks ────────────────────────────────────────────────────── */}
-        <section className="py-20 bg-cream">
+        {/* ── Role tracks ───────────────────────────────────────────────── */}
+        <section className="py-20 bg-mist/30">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="mb-12">
               <p className="text-xs font-mono text-moss/60 uppercase tracking-widest mb-3">
-                Three specialisations
+                Three role tracks
               </p>
               <h2 className="font-display font-bold text-4xl sm:text-5xl text-char leading-tight">
-                We go deep on customer operations.
+                One clear focus.
               </h2>
               <p className="mt-4 text-moss text-lg max-w-xl">
-                Not generalist staffing. Not a job board. One segment, done properly.
+                We only focus on customer operations work. That means roles where
+                communication, judgment, organization, and follow-through matter.
               </p>
             </div>
 
@@ -168,7 +278,6 @@ export default function HomePage() {
                   className="group hover:shadow-md transition-shadow cursor-pointer"
                 >
                   <Link href={`/join?track=${track.id}`} className="block">
-                    {/* Icon */}
                     <div
                       className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl mb-4"
                       style={{ backgroundColor: track.bg }}
@@ -176,29 +285,36 @@ export default function HomePage() {
                       {track.icon}
                     </div>
 
-                    {/* Title */}
                     <h3 className="font-display font-semibold text-xl text-char mb-2">
                       {track.title}
                     </h3>
 
-                    <p className="text-sm text-moss mb-4">{track.description}</p>
+                    <p className="text-sm text-moss mb-5 leading-relaxed">
+                      {track.description}
+                    </p>
 
-                    {/* Role examples */}
-                    <div className="flex flex-wrap gap-1.5">
+                    <div className="space-y-1.5 mb-5">
+                      <p className="text-xs font-mono text-moss/50 uppercase tracking-wider mb-2">
+                        Typical roles
+                      </p>
                       {track.roles.map((role) => (
-                        <span
+                        <div
                           key={role}
-                          className="text-xs px-2 py-0.5 rounded-full font-mono"
-                          style={{ backgroundColor: track.bg, color: track.color }}
+                          className="flex items-center gap-2 text-sm text-char"
                         >
+                          <span
+                            className="w-1 h-1 rounded-full flex-shrink-0"
+                            style={{ backgroundColor: track.color }}
+                          />
                           {role}
-                        </span>
+                        </div>
                       ))}
                     </div>
 
-                    {/* Fit preview */}
-                    <div className="mt-5 pt-4 border-t border-mist flex items-center justify-between">
-                      <span className="text-xs text-moss font-mono">Example fit</span>
+                    <div className="pt-4 border-t border-mist flex items-center justify-between">
+                      <span className="text-xs text-moss font-mono">
+                        Example fit
+                      </span>
                       <OleraFitCategory level="strong" size={16} showLabel />
                     </div>
                   </Link>
@@ -208,37 +324,36 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* ── How it works ──────────────────────────────────────────────── */}
-        <section id="how-it-works" className="py-20 bg-mist/40">
+        {/* ── How it works — 4 steps ────────────────────────────────────── */}
+        <section id="how-it-works" className="py-20 bg-cream">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="mb-12 text-center">
+            <div className="mb-12">
               <p className="text-xs font-mono text-moss/60 uppercase tracking-widest mb-3">
-                Three steps
+                How it works
               </p>
               <h2 className="font-display font-bold text-4xl sm:text-5xl text-char">
-                From CV to shortlisted in 24 hours.
+                Start with your CV.{" "}
+                <span className="text-amber">We ask for the rest.</span>
               </h2>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
               {STEPS.map((step, i) => (
                 <div key={step.n} className="relative">
                   {i < STEPS.length - 1 && (
                     <div
-                      className="hidden md:block absolute top-6 left-full w-8 border-t-2 border-dashed border-mist z-0"
+                      className="hidden lg:block absolute top-6 left-full w-8 border-t-2 border-dashed border-mist z-0"
                       aria-hidden="true"
                     />
                   )}
-
                   <div className="relative z-10">
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="w-12 h-12 rounded-full bg-forest text-cream flex items-center justify-center">
+                      <div className="w-12 h-12 rounded-full bg-forest text-cream flex items-center justify-center flex-shrink-0">
                         {step.icon}
                       </div>
                       <span className="font-mono text-sm text-moss/50">{step.n}</span>
                     </div>
-
-                    <h3 className="font-display font-semibold text-xl text-char mb-2">
+                    <h3 className="font-display font-semibold text-lg text-char mb-2">
                       {step.title}
                     </h3>
                     <p className="text-sm text-moss leading-relaxed">{step.body}</p>
@@ -247,7 +362,7 @@ export default function HomePage() {
               ))}
             </div>
 
-            <div className="mt-14 text-center">
+            <div className="mt-14">
               <Button size="lg" variant="primary" as="a" href="/join">
                 Start your profile
                 <ArrowRight size={18} />
@@ -256,59 +371,162 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* ── For employers teaser ──────────────────────────────────────── */}
+        {/* ── Your Olera Path — 4 readiness levels ─────────────────────── */}
+        <section className="py-16 bg-mist/30 border-y border-mist">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="mb-10">
+              <p className="text-xs font-mono text-moss/60 uppercase tracking-widest mb-3">
+                Your Olera path
+              </p>
+              <h2 className="font-display font-bold text-3xl sm:text-4xl text-char leading-tight">
+                Four levels. Progress at your own pace.
+              </h2>
+              <p className="mt-3 text-moss max-w-xl">
+                Each level unlocks more. Most candidates reach Employer Ready in
+                a few days. Remote Ready takes more, but it is the strongest
+                signal you can build.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {[
+                {
+                  n: "01",
+                  status: "Profile Built",
+                  body: "CV uploaded. Profile generated. Basic missing fields filled. You are in the system — not yet visible to employers.",
+                  dark: false,
+                  accent: false,
+                },
+                {
+                  n: "02",
+                  status: "Assessed",
+                  body: "Practical tasks complete. We have enough signal to understand how you write, think, and handle customer situations.",
+                  dark: false,
+                  accent: false,
+                },
+                {
+                  n: "03",
+                  status: "Employer Ready",
+                  body: "You meet the threshold for at least one role track. You can now be shortlisted and matched to relevant roles.",
+                  dark: false,
+                  accent: true,
+                },
+                {
+                  n: "04",
+                  status: "Remote Ready",
+                  body: "Strong written communication, reliable availability, remote setup confirmed, and AI-enabled work habits shown. The most valuable status for international roles.",
+                  dark: true,
+                  accent: false,
+                },
+              ].map((level) => (
+                <div
+                  key={level.status}
+                  className={[
+                    "rounded-2xl p-6 flex flex-col gap-3",
+                    level.dark
+                      ? "bg-forest border border-forest"
+                      : level.accent
+                      ? "bg-white border-2 border-amber/30"
+                      : "bg-white border border-mist",
+                  ].join(" ")}
+                >
+                  <p
+                    className={`text-xs font-mono ${
+                      level.dark ? "text-cream/30" : "text-moss/40"
+                    }`}
+                  >
+                    {level.n}
+                  </p>
+                  <div
+                    className={`inline-flex items-center gap-2 self-start px-2.5 py-1 rounded-full text-xs font-semibold ${
+                      level.dark
+                        ? "bg-amber text-forest"
+                        : level.accent
+                        ? "bg-amber/10 text-amber"
+                        : "bg-sage/10 text-forest"
+                    }`}
+                  >
+                    <span
+                      className={`w-1.5 h-1.5 rounded-full ${
+                        level.dark
+                          ? "bg-forest"
+                          : level.accent
+                          ? "bg-amber"
+                          : "bg-sage"
+                      }`}
+                    />
+                    {level.status}
+                  </div>
+                  <p
+                    className={`text-sm leading-relaxed ${
+                      level.dark ? "text-cream/60" : "text-moss"
+                    }`}
+                  >
+                    {level.body}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── Employer pointer ──────────────────────────────────────────── */}
         <section className="py-20 bg-forest text-cream">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
               <div>
-                <Badge variant="amber" className="mb-6">For employers</Badge>
-                <h2 className="font-display font-bold text-4xl sm:text-5xl leading-tight mb-6">
-                  Hire customer ops talent that{" "}
-                  <span className="text-amber">actually performs.</span>
-                </h2>
-                <p className="text-cream/70 text-lg leading-relaxed mb-8">
-                  Every candidate in our pool has been CV-screened, gap-assessed, and scored on a judgment test specific to their track. You get a curated shortlist — not a keyword dump.
+                <p className="text-xs font-mono text-cream/40 uppercase tracking-widest mb-4">
+                  For employers
                 </p>
-                <div className="flex flex-col sm:flex-row gap-3">
-                  <Button variant="primary" size="lg" as="a" href="/employer">
-                    See how we hire
-                    <ArrowRight size={18} />
-                  </Button>
-                  <Button variant="ghost" size="lg" as="a" href="/employer/pricing" className="text-cream hover:text-cream hover:bg-white/10">
-                    View pricing
-                  </Button>
-                </div>
+                <h2 className="font-display font-bold text-4xl sm:text-5xl leading-tight mb-5">
+                  Hire Kenyan customer operations talent without sorting through
+                  hundreds of CVs.
+                </h2>
+                <p className="text-cream/70 text-lg leading-relaxed mb-8 max-w-lg">
+                  Olera gives you a small shortlist of candidates who have already
+                  moved through a structured readiness pathway — practical tasks
+                  that show how they write, handle customers, organize work, and
+                  use digital tools. You see the signal, not just the CV.
+                </p>
+                <p className="text-cream/50 text-sm mb-8 font-mono">
+                  Review free · Interview free · Pay only when you hire
+                </p>
+                <Link
+                  href="/employer"
+                  className="inline-flex items-center gap-2 text-amber font-medium hover:gap-3 transition-all"
+                >
+                  Why companies hire from Kenya
+                  <ArrowRight size={16} />
+                </Link>
               </div>
 
-              <div className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {[
                   {
-                    title: "Shortlists within 48 hours",
-                    body: "We send you 3-5 pre-screened candidates matched to your exact role spec.",
-                    icon: "⚡",
+                    title: "Assessed before interview",
+                    body: "Candidates complete customer operations scenarios, tool checks, and a profile review before they are presented.",
+                  },
+                  {
+                    title: "Small shortlists",
+                    body: "We do not send a pile of CVs. We send a focused shortlist matched to your role.",
+                  },
+                  {
+                    title: "Remote-readiness checked",
+                    body: "We check availability, work setup, communication quality, and remote preference before matching candidates.",
                   },
                   {
                     title: "One flat fee on hire",
-                    body: "No retainers, no subscription. Pay only when you place someone.",
-                    icon: "💳",
+                    body: "No retainers, no percentage of salary. Pay once, only when you hire.",
                   },
-                  {
-                    title: "Remote-confirmed talent",
-                    body: "Setup photos and internet speed tests — we verify before you ever speak to them.",
-                    icon: "🌍",
-                  },
-                  {
-                    title: "Replacement guarantee",
-                    body: "If it doesn't work out in the first 90 days, we find a replacement at no extra cost.",
-                    icon: "🔄",
-                  },
-                ].map((f) => (
-                  <div key={f.title} className="flex gap-4 p-4 rounded-xl bg-white/5 border border-white/10">
-                    <span className="text-2xl flex-shrink-0">{f.icon}</span>
-                    <div>
-                      <h4 className="font-semibold text-cream mb-1">{f.title}</h4>
-                      <p className="text-sm text-cream/60">{f.body}</p>
-                    </div>
+                ].map((card) => (
+                  <div
+                    key={card.title}
+                    className="p-5 rounded-2xl bg-white/5 border border-white/10"
+                  >
+                    <h4 className="font-semibold text-cream text-sm mb-2">
+                      {card.title}
+                    </h4>
+                    <p className="text-sm text-cream/60 leading-relaxed">{card.body}</p>
                   </div>
                 ))}
               </div>
@@ -316,24 +534,52 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* ── Final CTA ─────────────────────────────────────────────────── */}
+        {/* ── Final CTA — split candidate / employer ────────────────────── */}
         <section className="py-20 bg-cream">
-          <div className="max-w-2xl mx-auto px-4 text-center">
-            <div className="flex justify-center mb-6" aria-hidden="true">
-              <Olera3A size={48} color={COLORS.amber} />
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* Candidate CTA */}
+              <div className="bg-white border border-mist rounded-3xl p-8 sm:p-10 flex flex-col">
+                <div className="mb-6" aria-hidden="true">
+                  <Olera3A size={36} color={COLORS.amber} />
+                </div>
+                <h2 className="font-display font-bold text-3xl text-char mb-3">
+                  Start with your CV.
+                </h2>
+                <p className="text-moss leading-relaxed mb-8 flex-1">
+                  Upload your CV. Olera will build your profile, show where you
+                  fit, and match you when the right role comes in.
+                </p>
+                <Button size="lg" variant="primary" as="a" href="/join" fullWidth>
+                  Upload your CV — it&apos;s free
+                  <ArrowRight size={18} />
+                </Button>
+              </div>
+
+              {/* Employer CTA */}
+              <div className="bg-forest text-cream rounded-3xl p-8 sm:p-10 flex flex-col">
+                <div className="mb-6" aria-hidden="true">
+                  <Olera3A size={36} color={COLORS.cream} />
+                </div>
+                <h2 className="font-display font-bold text-3xl mb-3">
+                  Hiring customer operations talent?
+                </h2>
+                <p className="text-cream/70 leading-relaxed mb-8 flex-1">
+                  Tell us the role. We will send a small assessed shortlist when
+                  we find the right fit.
+                </p>
+                <Link
+                  href="/employer"
+                  className="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-xl bg-amber text-cream font-semibold hover:bg-amber/90 transition-colors"
+                >
+                  Hire talent
+                  <ArrowRight size={18} />
+                </Link>
+              </div>
             </div>
-            <h2 className="font-display font-bold text-4xl sm:text-5xl text-char mb-4">
-              Ready to be found?
-            </h2>
-            <p className="text-moss text-lg mb-8">
-              Upload your CV and let us do the rest. No signup fees, no recruiter gatekeeping, no spam.
-            </p>
-            <Button size="xl" variant="primary" as="a" href="/join" fullWidth className="max-w-sm mx-auto">
-              Upload your CV — it&apos;s free
-              <ArrowRight size={20} />
-            </Button>
           </div>
         </section>
+
       </main>
 
       <Footer />

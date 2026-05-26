@@ -25,8 +25,8 @@ export function Footer() {
             <ul className="space-y-2">
               {[
                 { label: "Get started", href: "/join" },
-                { label: "How it works", href: "/how-it-works" },
-                { label: "Assessment guide", href: "/assessment-guide" },
+                { label: "How it works", href: "/#how-it-works" },
+                { label: "My profile", href: "/dashboard" },
               ].map((link) => (
                 <li key={link.href}>
                   <Link href={link.href} className="text-sm text-cream/60 hover:text-cream transition-colors">
@@ -46,7 +46,7 @@ export function Footer() {
               {[
                 { label: "Hire talent", href: "/employer" },
                 { label: "Pricing", href: "/employer/pricing" },
-                { label: "Post a role", href: "/employer/roles/new" },
+                { label: "Post a role", href: "/employer#brief" },
               ].map((link) => (
                 <li key={link.href}>
                   <Link href={link.href} className="text-sm text-cream/60 hover:text-cream transition-colors">

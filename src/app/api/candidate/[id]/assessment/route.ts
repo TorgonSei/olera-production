@@ -1,6 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServiceClient } from "@/lib/supabase/server";
 import Anthropic from "@anthropic-ai/sdk";
+import { Resend } from "resend";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
+const NOTIFY_TO = "hello@olera.co";
+const FROM = process.env.RESEND_FROM_ADDRESS ?? "hello@olera.co";
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY! });
 
@@ -138,13 +143,11 @@ export async function POST(
       console.error("Assessment insert error:", assessmentError);
     }
 
-    // Update candidate status and readiness
+    // Update candidate status and readiness.
+    // "pass" → near_ready (pending team review, not auto-activated).
+    // Only admin can promote to "ready".
     const readiness =
-      scoring.tier === "pass"
-        ? "ready"
-        : scoring.tier === "borderline"
-        ? "near_ready"
-        : "developing";
+      scoring.tier === "fail" ? "developing" : "near_ready";
 
     await supabase
       .from("candidates")
@@ -158,6 +161,44 @@ export async function POST(
         updated_at: new Date().toISOString(),
       })
       .eq("id", id);
+
+    // Notify the Olera team that a new assessment is ready to review
+    const candidateName = candidate
+      ? (await supabase.from("candidates").select("full_name, email, track").eq("id", id).single())?.data
+      : null;
+    const name = candidateName?.full_name ?? "A candidate";
+    const candidateEmail = candidateName?.email ?? null;
+    const trackLabel = { support: "Customer Support", success: "Customer Success", assistant: "Virtual / Executive Assistant" }[track] ?? track;
+    const tierLabel = scoring.tier === "pass" ? "Pass" : scoring.tier === "borderline" ? "Borderline" : "Needs work";
+
+    resend.emails.send({
+      from: FROM,
+      to: NOTIFY_TO,
+      subject: `Assessment ready for review — ${name} (${tierLabel})`,
+      html: `
+        <div style="font-family:sans-serif;max-width:600px;color:#1c1a16">
+          <p style="font-size:12px;color:#888;font-family:monospace;text-transform:uppercase;letter-spacing:0.1em">Assessment complete</p>
+          <h2 style="font-size:22px;font-weight:700;margin:8px 0 20px">${name} · ${trackLabel}</h2>
+          <table style="width:100%;border-collapse:collapse;margin-bottom:20px">
+            <tr>
+              <td style="padding:8px 0;border-bottom:1px solid #e3e3d8;color:#54625a;font-size:13px;width:140px">Score</td>
+              <td style="padding:8px 0;border-bottom:1px solid #e3e3d8;font-size:13px;font-weight:600">${scoring.total_score}/100</td>
+            </tr>
+            <tr>
+              <td style="padding:8px 0;border-bottom:1px solid #e3e3d8;color:#54625a;font-size:13px">Tier</td>
+              <td style="padding:8px 0;border-bottom:1px solid #e3e3d8;font-size:13px">${tierLabel}</td>
+            </tr>
+            <tr>
+              <td style="padding:8px 0;color:#54625a;font-size:13px">Scenarios correct</td>
+              <td style="padding:8px 0;font-size:13px">${scenarioScore}/3</td>
+            </tr>
+          </table>
+          ${scoring.feedback ? `<div style="background:#f4f1e8;border-radius:10px;padding:16px;margin-bottom:20px"><p style="font-size:13px;margin:0;color:#1c1a16">${scoring.feedback}</p></div>` : ""}
+          <a href="https://olera.co/admin/candidates/${id}" style="display:inline-block;background:#1a2620;color:#f4f1e8;text-decoration:none;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:600">Review candidate →</a>
+          <p style="font-size:12px;color:#aaa;margin-top:24px">Olera · Nairobi</p>
+        </div>
+      `,
+    }).catch(console.error);
 
     return NextResponse.json({
       success: true,

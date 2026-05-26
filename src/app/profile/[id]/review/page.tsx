@@ -11,27 +11,27 @@ import { Footer } from "@/components/layout/Footer";
 /* ─── Readiness config ──────────────────────────────────────────────────── */
 const READINESS_CONFIG = {
   ready: {
-    label: "Ready",
+    label: "Employer Ready",
     color: "sage" as const,
-    description: "Your profile is active and being matched to roles.",
+    description: "Your profile is active and being matched to live roles.",
     icon: <CheckCircle size={16} />,
   },
   near_ready: {
-    label: "Near ready",
+    label: "Assessed",
     color: "amber" as const,
-    description: "Under review. We may reach out with a few questions.",
+    description: "Under review. Our team may reach out with a few questions before activating your profile.",
     icon: <Clock size={16} />,
   },
   developing: {
-    label: "Developing",
+    label: "Keep building",
     color: "moss" as const,
-    description: "Your profile needs more experience before active matching.",
+    description: "Good start — review your feedback below and reapply when ready.",
     icon: <Clock size={16} />,
   },
   unscreened: {
-    label: "Pending review",
+    label: "Profile Built",
     color: "sand" as const,
-    description: "Our team is reviewing your profile.",
+    description: "CV received. Complete your pathway tasks to reach Employer Ready.",
     icon: <Clock size={16} />,
   },
 };
@@ -78,6 +78,54 @@ export default async function ProfileReviewPage({
       </header>
 
       <div className="max-w-2xl mx-auto px-4 py-10">
+        {/* Readiness Pathway progress */}
+        {(() => {
+          const PATHWAY = [
+            { n: "01", label: "Profile Built" },
+            { n: "02", label: "Assessed" },
+            { n: "03", label: "Employer Ready" },
+            { n: "04", label: "Remote Ready" },
+          ];
+          // Use status + readiness to determine step.
+          // unscreened = Profile Built (step 0), gaps_filled still 0,
+          // assessed (any readiness) = Assessed (step 1),
+          // ready = Employer Ready (step 2).
+          const status = candidate.status as string;
+          const activeIndex =
+            readiness === "ready" ? 2 :
+            status === "assessed" || readiness === "near_ready" ? 1 :
+            0;
+
+          return (
+            <div className="flex items-start gap-3 mb-8">
+              {PATHWAY.map((step, i) => {
+                const done = i < activeIndex;
+                const current = i === activeIndex;
+                return (
+                  <div key={step.n} className="flex-1 min-w-0">
+                    <div className={[
+                      "h-1 rounded-full mb-2",
+                      done ? "bg-sage" : current ? "bg-amber" : "bg-mist",
+                    ].join(" ")} />
+                    <p className={[
+                      "text-xs font-mono",
+                      done ? "text-sage" : current ? "text-amber font-semibold" : "text-moss/40",
+                    ].join(" ")}>
+                      {step.n}
+                    </p>
+                    <p className={[
+                      "text-xs font-medium leading-tight mt-0.5",
+                      done || current ? "text-char" : "text-moss/40",
+                    ].join(" ")}>
+                      {step.label}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })()}
+
         {/* Status banner */}
         <div
           className="rounded-2xl p-5 mb-8 border flex items-start gap-4"
@@ -217,7 +265,7 @@ export default async function ProfileReviewPage({
           <Card variant="elevated" className="mb-6">
             <h3 className="text-xs font-mono text-moss/60 uppercase tracking-widest mb-4 flex items-center gap-1.5">
               <Star size={12} />
-              Assessment
+              Your results
             </h3>
             <div className="flex items-center justify-between">
               <div>
@@ -233,9 +281,9 @@ export default async function ProfileReviewPage({
                   className="mt-2"
                   dot
                 >
-                  {candidate.assessment_tier === "pass" ? "Passed"
-                    : candidate.assessment_tier === "borderline" ? "Borderline"
-                    : "Needs work"}
+                  {candidate.assessment_tier === "pass" ? "Strong result"
+                    : candidate.assessment_tier === "borderline" ? "Under review"
+                    : "Keep building"}
                 </Badge>
               </div>
               <OleraFitCategory
@@ -271,7 +319,7 @@ export default async function ProfileReviewPage({
               {!candidate.assessment_score && (
                 <div className="flex items-center gap-2 text-sm text-amber font-medium">
                   <div className="w-4 h-4 rounded-full border-2 border-amber flex-shrink-0" />
-                  Complete the assessment (+25%)
+                  Show your work to reach Employer Ready (+25%)
                 </div>
               )}
             </div>
@@ -282,12 +330,14 @@ export default async function ProfileReviewPage({
         <div className="flex flex-col sm:flex-row gap-3">
           {!candidate.assessment_score && (
             <Button variant="primary" size="lg" as="a" href={`/assessment/${id}`} fullWidth>
-              Take assessment
+              Show your work
             </Button>
           )}
-          <Button variant="outline" size="lg" as="a" href={`/p/${candidate.profile_slug ?? id}`} fullWidth>
-            View public profile
-          </Button>
+          {candidate.profile_slug && (
+            <Button variant="outline" size="lg" as="a" href={`/p/${candidate.profile_slug}`} fullWidth>
+              View public profile
+            </Button>
+          )}
         </div>
       </div>
 

@@ -3,10 +3,7 @@
 import React from "react";
 import { cn } from "@/lib/cn";
 
-/* ─── Token map ─────────────────────────────────────────────────────────────
-   Mirrors equatorial.js semantic roles.
-   Usage: import { COLORS } from "@/components/brand/Mark"
-──────────────────────────────────────────────────────────────────────────── */
+/* ─── Equatorial palette tokens ──────────────────────────────────────────── */
 export const COLORS = {
   cream:  "#f4f1e8",
   mist:   "#e3e3d8",
@@ -22,388 +19,384 @@ export const COLORS = {
 
 /* ─── Fit levels ──────────────────────────────────────────────────────────── */
 export const FIT_LEVELS = {
-  strong:   { count: 3, color: COLORS.sage  },
-  possible: { count: 2, color: COLORS.amber },
-  stretch:  { count: 1, color: COLORS.terra },
-  poor:     { count: 0, color: COLORS.moss  },
+  strong:   { count: 3, color: "#6e7a5f", label: "Strong fit"   },
+  possible: { count: 2, color: "#c4823a", label: "Possible fit" },
+  stretch:  { count: 1, color: "#a85a3a", label: "Stretch fit"  },
+  poor:     { count: 0, color: "#54625a", label: "Low fit"      },
 } as const;
 
 export type FitLevel = keyof typeof FIT_LEVELS;
 
-/* ─── Olera 3A Mark ───────────────────────────────────────────────────────── */
+/* ─── Exact geometry from brand file ─────────────────────────────────────────
+   100×100 viewBox. BAR_H=10, BAR_R=5.
+   Bars at y=27/45/63, widths 100/66/33, ALL right-flush (x = 100 − w).
+──────────────────────────────────────────────────────────────────────────── */
+const BARS = [
+  { y: 27, w: 100 },  // 100% — the full signal
+  { y: 45, w: 66  },  //  66% — narrowing
+  { y: 63, w: 33  },  //  33% — resolved
+] as const;
+const BAR_H = 10;
+const BAR_R = 5;
+
 interface MarkProps {
   size?: number;
   color?: string;
   className?: string;
 }
 
-/**
- * Three horizontal bars, right-flush, widths 100/66/33.
- * The primary brand mark.
- */
-export function Olera3A({ size = 24, color = COLORS.char, className }: MarkProps) {
-  const h = size / 5;
-  const gap = h * 0.6;
-  const totalH = h * 3 + gap * 2;
-  const y1 = 0;
-  const y2 = h + gap;
-  const y3 = (h + gap) * 2;
-
-  return (
-    <svg
-      width={size}
-      height={totalH}
-      viewBox={`0 0 ${size} ${totalH}`}
-      fill="none"
-      aria-hidden="true"
-      className={className}
-    >
-      <rect x={0}            y={y1} width={size}           height={h} rx={h / 2} fill={color} />
-      <rect x={size * 0.34}  y={y2} width={size * 0.66}    height={h} rx={h / 2} fill={color} />
-      <rect x={size * 0.67}  y={y3} width={size * 0.33}    height={h} rx={h / 2} fill={color} />
-    </svg>
-  );
-}
-
-/* ─── Graduated Mark (opacity stepped) ───────────────────────────────────── */
-export function Olera3AGraduated({ size = 24, color = COLORS.char, className }: MarkProps) {
-  const h = size / 5;
-  const gap = h * 0.6;
-  const totalH = h * 3 + gap * 2;
-  const y1 = 0;
-  const y2 = h + gap;
-  const y3 = (h + gap) * 2;
-
-  return (
-    <svg
-      width={size}
-      height={totalH}
-      viewBox={`0 0 ${size} ${totalH}`}
-      fill="none"
-      aria-hidden="true"
-      className={className}
-    >
-      <rect x={0}           y={y1} width={size}        height={h} rx={h / 2} fill={color} fillOpacity={1}   />
-      <rect x={size * 0.34} y={y2} width={size * 0.66} height={h} rx={h / 2} fill={color} fillOpacity={0.6} />
-      <rect x={size * 0.67} y={y3} width={size * 0.33} height={h} rx={h / 2} fill={color} fillOpacity={0.35}/>
-    </svg>
-  );
-}
-
-/* ─── Wordmark ────────────────────────────────────────────────────────────── */
-interface WordmarkProps {
-  height?: number;
-  color?: string;
-  className?: string;
-}
-
-/**
- * Lowercase "olera" — the notched 'o' is approximated with a path clip.
- * For exact brand fidelity, swap in the exported SVG from the brand files.
- */
-export function OleraWordmark({ height = 20, color = COLORS.char, className }: WordmarkProps) {
-  const aspect = 3.8;
-  const width = height * aspect;
-
-  return (
-    <svg
-      width={width}
-      height={height}
-      viewBox="0 0 76 20"
-      fill="none"
-      aria-label="Olera"
-      className={className}
-    >
-      {/* Notched 'o' — outer circle with 22° aperture cut at upper-right */}
-      <path
-        d="M10 1.5 A8.5 8.5 0 1 1 10 18.5 A8.5 8.5 0 0 1 10 1.5 Z
-           M10 1.5 L17.5 5.5"
-        stroke={color}
-        strokeWidth="2.5"
-        strokeLinecap="round"
-        fill="none"
-      />
-      {/* Simpler wordmark using text — replace with exact SVG paths in production */}
-      <text
-        x="22"
-        y="15.5"
-        fontFamily="'Hanken Grotesk', system-ui, sans-serif"
-        fontWeight="600"
-        fontSize="15"
-        fill={color}
-        letterSpacing="-0.02em"
-      >
-        lera
-      </text>
-    </svg>
-  );
-}
-
-/* ─── Lockup: horizontal (mark left, wordmark right) ─────────────────────── */
-interface LockupProps {
-  size?: number;
-  color?: string;
-  className?: string;
-  reversed?: boolean; // light mark on dark bg
-}
-
-export function OleraLockupH({ size = 32, color, className, reversed }: LockupProps) {
-  const c = color ?? (reversed ? COLORS.cream : COLORS.char);
-  const gap = size * 0.4;
-
-  return (
-    <div className={cn("flex items-center", className)} style={{ gap }}>
-      <Olera3A size={size} color={c} />
-      <OleraWordmark height={size * 0.55} color={c} />
-    </div>
-  );
-}
-
-export function OleraLockupV({ size = 32, color, className, reversed }: LockupProps) {
-  const c = color ?? (reversed ? COLORS.cream : COLORS.char);
-
-  return (
-    <div className={cn("flex flex-col items-end", className)}>
-      <Olera3A size={size} color={c} />
-      <OleraWordmark height={size * 0.5} color={c} className="mt-2" />
-    </div>
-  );
-}
-
-/* ─── App icon (rounded square) ──────────────────────────────────────────── */
-interface AppIconProps {
-  size?: number;
-  className?: string;
-}
-
-export function OleraAppIcon({ size = 48, className }: AppIconProps) {
-  const r = size * 0.22;
-  const pad = size * 0.2;
-  const innerSize = size - pad * 2;
-
+/* ─── Olera3A — solid primary mark ──────────────────────────────────────── */
+export function Olera3A({ size = 80, color = COLORS.char, className }: MarkProps) {
   return (
     <svg
       width={size}
       height={size}
-      viewBox={`0 0 ${size} ${size}`}
-      fill="none"
+      viewBox="0 0 100 100"
+      style={{ display: "block", overflow: "visible" }}
+      role="img"
       aria-label="Olera"
       className={className}
     >
-      <rect width={size} height={size} rx={r} fill={COLORS.forest} />
-      <g transform={`translate(${pad}, ${pad + (innerSize - (innerSize * 0.72)) / 2})`}>
-        <Olera3AGraduated size={innerSize} color={COLORS.cream} />
-      </g>
-    </svg>
-  );
-}
-
-/* ─── FitMeter — bars as fit score (0-100) ───────────────────────────────── */
-interface FitMeterProps {
-  score: number; // 0-100
-  size?: number;
-  className?: string;
-}
-
-export function OleraFitMeter({ score, size = 24, className }: FitMeterProps) {
-  const clamped = Math.max(0, Math.min(100, score));
-  const color =
-    clamped >= 75
-      ? COLORS.sage
-      : clamped >= 50
-      ? COLORS.amber
-      : clamped >= 25
-      ? COLORS.terra
-      : COLORS.moss;
-
-  const h = size / 5;
-  const gap = h * 0.6;
-  const totalH = h * 3 + gap * 2;
-  const y1 = 0;
-  const y2 = h + gap;
-  const y3 = (h + gap) * 2;
-
-  // Each bar fills proportionally from right; top bar = overall, mid = 66%, bot = 33%
-  const bar1 = (clamped / 100) * size;
-  const bar2 = (clamped / 100) * size * 0.66;
-  const bar3 = (clamped / 100) * size * 0.33;
-
-  return (
-    <svg
-      width={size}
-      height={totalH}
-      viewBox={`0 0 ${size} ${totalH}`}
-      fill="none"
-      aria-label={`Fit score: ${clamped}`}
-      className={className}
-    >
-      {/* Track (empty) */}
-      <rect x={0}           y={y1} width={size}        height={h} rx={h/2} fill={COLORS.mist} />
-      <rect x={size * 0.34} y={y2} width={size * 0.66} height={h} rx={h/2} fill={COLORS.mist} />
-      <rect x={size * 0.67} y={y3} width={size * 0.33} height={h} rx={h/2} fill={COLORS.mist} />
-      {/* Fill */}
-      <rect x={size - bar1}            y={y1} width={bar1} height={h} rx={h/2} fill={color} />
-      <rect x={size - bar2}            y={y2} width={bar2} height={h} rx={h/2} fill={color} />
-      <rect x={size - bar3}            y={y3} width={bar3} height={h} rx={h/2} fill={color} />
-    </svg>
-  );
-}
-
-/* ─── FitCategory — categorical fit ──────────────────────────────────────── */
-interface FitCategoryProps {
-  level: FitLevel;
-  size?: number;
-  showLabel?: boolean;
-  className?: string;
-}
-
-const FIT_LABELS: Record<FitLevel, string> = {
-  strong:   "Strong fit",
-  possible: "Possible fit",
-  stretch:  "Stretch",
-  poor:     "Low fit",
-};
-
-export function OleraFitCategory({ level, size = 20, showLabel = false, className }: FitCategoryProps) {
-  const { count, color } = FIT_LEVELS[level];
-  const h = size / 5;
-  const gap = h * 0.6;
-  const totalH = h * 3 + gap * 2;
-  const y1 = 0;
-  const y2 = h + gap;
-  const y3 = (h + gap) * 2;
-
-  const bars = [
-    { x: 0, y: y1, w: size },
-    { x: size * 0.34, y: y2, w: size * 0.66 },
-    { x: size * 0.67, y: y3, w: size * 0.33 },
-  ];
-
-  return (
-    <div className={cn("flex items-center gap-2", className)}>
-      <svg
-        width={size}
-        height={totalH}
-        viewBox={`0 0 ${size} ${totalH}`}
-        fill="none"
-        aria-label={FIT_LABELS[level]}
-      >
-        {bars.map((bar, i) => (
-          <rect
-            key={i}
-            x={bar.x}
-            y={bar.y}
-            width={bar.w}
-            height={h}
-            rx={h / 2}
-            fill={i < count ? color : COLORS.mist}
-          />
-        ))}
-      </svg>
-      {showLabel && (
-        <span
-          className="text-xs font-medium font-mono"
-          style={{ color }}
-        >
-          {FIT_LABELS[level]}
-        </span>
-      )}
-    </div>
-  );
-}
-
-/* ─── FitPip — 3-pip indicator for dense rows ────────────────────────────── */
-interface FitPipProps {
-  level: FitLevel;
-  size?: number;
-  className?: string;
-}
-
-export function OleraFitPip({ level, size = 12, className }: FitPipProps) {
-  const { count, color } = FIT_LEVELS[level];
-  const r = size / 2;
-  const spacing = size * 1.4;
-
-  return (
-    <svg
-      width={spacing * 2 + size}
-      height={size}
-      viewBox={`0 0 ${spacing * 2 + size} ${size}`}
-      fill="none"
-      aria-label={`${count}/3 fit`}
-      className={className}
-    >
-      {[0, 1, 2].map((i) => (
-        <circle
+      {BARS.map((b, i) => (
+        <rect
           key={i}
-          cx={i * spacing + r}
-          cy={r}
-          r={r}
-          fill={i < count ? color : COLORS.mist}
+          x={100 - b.w}
+          y={b.y}
+          width={b.w}
+          height={BAR_H}
+          rx={BAR_R}
+          fill={color}
         />
       ))}
     </svg>
   );
 }
 
-/* ─── Completeness gauge ──────────────────────────────────────────────────── */
+/* ─── Graduated mark — top lightest → bottom solid (0.32 / 0.62 / 1) ───── */
+export function Olera3AGraduated({ size = 80, color = COLORS.char, className }: MarkProps) {
+  const ops = [0.32, 0.62, 1] as const;
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 100 100"
+      style={{ display: "block" }}
+      aria-hidden="true"
+      className={className}
+    >
+      {BARS.map((b, i) => (
+        <rect
+          key={i}
+          x={100 - b.w}
+          y={b.y}
+          width={b.w}
+          height={BAR_H}
+          rx={BAR_R}
+          fill={color}
+          opacity={ops[i]}
+        />
+      ))}
+    </svg>
+  );
+}
+
+/* ─── Wordmark — notched 'o' + "lera" in Hanken Grotesk ─────────────────── */
+interface WordmarkProps {
+  size?: number;
+  color?: string;
+  weight?: number;
+  className?: string;
+}
+
+export function OleraWordmark({ size = 56, color = COLORS.char, weight = 500, className }: WordmarkProps) {
+  const oSize   = size * 0.66;
+  const stroke  = oSize * 0.165;
+  const r       = (oSize - stroke) / 2;
+  const cx      = oSize / 2;
+  const cy      = oSize / 2;
+
+  // 22° aperture at upper-right — angles relative to standard SVG coords
+  // deg2rad: rotate so 0° = top, then go clockwise
+  const deg2rad = (d: number) => (-90 + d) * (Math.PI / 180);
+  const a1 = deg2rad(38);
+  const a2 = deg2rad(60);
+  const p1 = [cx + r * Math.cos(a1), cy + r * Math.sin(a1)];
+  const p2 = [cx + r * Math.cos(a2), cy + r * Math.sin(a2)];
+
+  // Large arc from p1 → p2, going the long way (sweep-flag=0, large-arc=1)
+  const d = `M ${p1[0].toFixed(2)} ${p1[1].toFixed(2)} A ${r} ${r} 0 1 0 ${p2[0].toFixed(2)} ${p2[1].toFixed(2)}`;
+
+  return (
+    <div
+      style={{ display: "inline-flex", alignItems: "baseline", lineHeight: 1, color }}
+      className={className}
+    >
+      {/* Notched 'o' as SVG */}
+      <svg
+        width={oSize}
+        height={size}
+        viewBox={`0 0 ${oSize} ${size}`}
+        style={{ display: "block", flexShrink: 0 }}
+        aria-hidden="true"
+      >
+        <g transform={`translate(0, ${(size - oSize) * 0.92})`}>
+          <path
+            d={d}
+            fill="none"
+            stroke={color}
+            strokeWidth={stroke}
+            strokeLinecap="butt"
+          />
+        </g>
+      </svg>
+      {/* "lera" text */}
+      <span
+        style={{
+          fontFamily: '"Hanken Grotesk", -apple-system, system-ui, sans-serif',
+          fontWeight: weight,
+          fontSize:   size,
+          color,
+          letterSpacing: "-0.015em",
+          marginLeft: size * 0.005,
+          lineHeight: 1,
+        }}
+      >
+        lera
+      </span>
+    </div>
+  );
+}
+
+/* ─── Horizontal lockup — mark + wordmark ───────────────────────────────── */
+interface LockupHProps {
+  size?: number;
+  color?: string;
+  reversed?: boolean;
+  className?: string;
+}
+
+export function OleraLockupH({ size = 56, color, reversed, className }: LockupHProps) {
+  const c = color ?? (reversed ? COLORS.cream : COLORS.char);
+  const gap = Math.round(size * 0.25);
+  const wordSize = Math.round(size * 0.78);
+
+  return (
+    <div
+      style={{ display: "inline-flex", alignItems: "center", gap, lineHeight: 1 }}
+      className={className}
+    >
+      <Olera3A size={size} color={c} />
+      <span
+        style={{
+          fontFamily: '"Hanken Grotesk", -apple-system, system-ui, sans-serif',
+          fontWeight: 500,
+          fontSize:   wordSize,
+          color:      c,
+          letterSpacing: "-0.02em",
+          lineHeight: 1,
+        }}
+      >
+        olera
+      </span>
+    </div>
+  );
+}
+
+/* ─── Vertical lockup — mark above wordmark, centred ────────────────────── */
+export function OleraLockupV({ size = 80, color, reversed, className }: LockupHProps) {
+  const c = color ?? (reversed ? COLORS.cream : COLORS.char);
+  const wordSize = Math.round(size * 0.45);
+
+  return (
+    <div
+      style={{ display: "inline-flex", flexDirection: "column", alignItems: "center", gap: 14, lineHeight: 1 }}
+      className={className}
+    >
+      <Olera3A size={size} color={c} />
+      <span
+        style={{
+          fontFamily: '"Hanken Grotesk", -apple-system, system-ui, sans-serif',
+          fontWeight: 500,
+          fontSize:   wordSize,
+          color:      c,
+          letterSpacing: "-0.01em",
+          lineHeight: 1,
+        }}
+      >
+        olera
+      </span>
+    </div>
+  );
+}
+
+/* ─── App icon — rounded square with mark ───────────────────────────────── */
+interface AppIconProps {
+  size?: number;
+  ground?: string;
+  color?: string;
+  className?: string;
+}
+
+export function OleraAppIcon({ size = 120, ground = COLORS.forest, color = COLORS.cream, className }: AppIconProps) {
+  const r = Math.round(size * 0.22);
+  return (
+    <div
+      style={{
+        width: size, height: size,
+        background: ground,
+        borderRadius: r,
+        display: "flex", alignItems: "center", justifyContent: "center",
+        boxShadow: "0 1px 2px rgba(0,0,0,0.06), 0 8px 24px rgba(0,0,0,0.06)",
+      }}
+      className={className}
+    >
+      <Olera3A size={size * 0.5} color={color} />
+    </div>
+  );
+}
+
+/* ─── FitCategory — 3A bars as categorical fit indicator ────────────────── */
+interface FitCategoryProps {
+  level: FitLevel;
+  size?: number;
+  showLabel?: boolean;
+  layout?: "graduated" | "uniform";
+  className?: string;
+}
+
+export function OleraFitCategory({
+  level,
+  size = 120,
+  showLabel = false,
+  layout = "graduated",
+  className,
+}: FitCategoryProps) {
+  const { count, color, label } = FIT_LEVELS[level];
+  const ground = "rgba(28,26,22,0.12)";
+
+  const bars = layout === "uniform"
+    ? [{ y: 27, w: 100 }, { y: 45, w: 100 }, { y: 63, w: 100 }]
+    : BARS.map((b) => ({ ...b }));
+
+  return (
+    <div className={cn("inline-flex items-center gap-2", className)}>
+      <svg
+        width={size}
+        height={size}
+        viewBox="0 0 100 100"
+        style={{ display: "block" }}
+        aria-label={label}
+      >
+        {bars.map((b, i) => (
+          <rect
+            key={i}
+            x={100 - b.w}
+            y={b.y}
+            width={b.w}
+            height={BAR_H}
+            rx={BAR_R}
+            fill={i < count ? color : ground}
+          />
+        ))}
+      </svg>
+      {showLabel && (
+        <span
+          className="text-xs font-mono font-medium whitespace-nowrap"
+          style={{ color }}
+        >
+          {label}
+        </span>
+      )}
+    </div>
+  );
+}
+
+/* ─── FitPip — tiny 3-pip for dense rows ────────────────────────────────── */
+interface FitPipProps {
+  level: FitLevel;
+  size?: number;
+  className?: string;
+}
+
+export function OleraFitPip({ level, size = 28, className }: FitPipProps) {
+  const { count, color } = FIT_LEVELS[level];
+  const ground = "rgba(28,26,22,0.18)";
+  return (
+    <svg
+      width={size}
+      height={size * 0.6}
+      viewBox="0 0 50 30"
+      style={{ display: "inline-block", verticalAlign: "middle" }}
+      aria-label={`${count}/3 fit`}
+      className={className}
+    >
+      {[0, 1, 2].map((i) => (
+        <rect
+          key={i}
+          x={i * 18}
+          y="10"
+          width="14"
+          height="10"
+          rx="5"
+          fill={i < count ? color : ground}
+        />
+      ))}
+    </svg>
+  );
+}
+
+/* ─── Completeness — 3A bars with N filled (0-3 count OR 0-100 value) ───── */
 interface CompletenessProps {
-  value: number; // 0-100
+  value?: number;   // 0-100 percentage (converted to 0-3 bars)
+  count?: number;   // 0-3 bars directly
+  color?: string;
   size?: number;
   showLabel?: boolean;
   className?: string;
 }
 
-export function OleraCompleteness({ value, size = 48, showLabel = false, className }: CompletenessProps) {
-  const clamped = Math.max(0, Math.min(100, value));
-  const cx = size / 2;
-  const cy = size / 2;
-  const strokeW = size / 8;
-  const r = (size - strokeW) / 2;
-  const circumference = 2 * Math.PI * r;
-  const filled = (clamped / 100) * circumference;
+export function OleraCompleteness({
+  value,
+  count,
+  color = COLORS.amber,
+  size = 28,
+  showLabel = false,
+  className,
+}: CompletenessProps) {
+  // Accept either count (0-3) or value (0-100)
+  const filled = count !== undefined
+    ? count
+    : value !== undefined
+    ? Math.round((value / 100) * 3)
+    : 0;
 
-  const color =
-    clamped >= 80
-      ? COLORS.sage
-      : clamped >= 50
-      ? COLORS.amber
-      : COLORS.terra;
+  const ground = "rgba(28,26,22,0.12)";
 
   return (
-    <div className={cn("flex flex-col items-center gap-1", className)}>
-      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} aria-label={`Profile ${clamped}% complete`}>
-        {/* Track */}
-        <circle cx={cx} cy={cy} r={r} stroke={COLORS.mist} strokeWidth={strokeW} fill="none" />
-        {/* Fill */}
-        <circle
-          cx={cx}
-          cy={cy}
-          r={r}
-          stroke={color}
-          strokeWidth={strokeW}
-          fill="none"
-          strokeDasharray={`${filled} ${circumference - filled}`}
-          strokeDashoffset={circumference / 4}
-          strokeLinecap="round"
-          style={{ transition: "stroke-dasharray 0.6s ease" }}
-        />
-        {/* Label inside */}
-        <text
-          x={cx}
-          y={cy + 1}
-          textAnchor="middle"
-          dominantBaseline="middle"
-          fontSize={size * 0.22}
-          fontFamily="'JetBrains Mono', monospace"
-          fontWeight="500"
-          fill={COLORS.char}
-        >
-          {clamped}%
-        </text>
+    <div className={cn("inline-flex flex-col items-center gap-1", className)}>
+      <svg
+        width={size}
+        height={size}
+        viewBox="0 0 100 100"
+        style={{ display: "inline-block" }}
+        aria-label={`${value !== undefined ? value : Math.round((filled / 3) * 100)}% complete`}
+      >
+        {BARS.map((b, i) => (
+          <rect
+            key={i}
+            x={100 - b.w}
+            y={b.y}
+            width={b.w}
+            height={BAR_H}
+            rx={BAR_R}
+            fill={i < filled ? color : ground}
+          />
+        ))}
       </svg>
       {showLabel && (
-        <span className="text-xs text-moss font-mono">Profile complete</span>
+        <span className="text-xs text-moss font-mono">
+          {value !== undefined ? `${value}%` : `${Math.round((filled / 3) * 100)}%`} complete
+        </span>
       )}
     </div>
   );

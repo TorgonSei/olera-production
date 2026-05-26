@@ -48,7 +48,7 @@ export const metadata: Metadata = {
     template: "%s | Olera",
   },
   description:
-    "Olera matches exceptional customer operations talent with the teams that need them most. Customer Support, Customer Success, and Virtual Assistants — screened, assessed, and ready.",
+    "Kenyan customer operations talent for global teams. Customer support, customer success, and virtual assistant roles — assessed, shortlisted, and ready to hire.",
   keywords: [
     "customer operations talent",
     "customer support hiring",

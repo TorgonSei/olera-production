@@ -93,6 +93,12 @@ export default function JoinPage() {
         body: JSON.stringify({ phone, token: otp }),
       });
       if (!res.ok) throw new Error((await res.json()).error ?? "Invalid code");
+      const { isNew } = await res.json();
+      // Returning candidate — go to their dashboard
+      if (!isNew) {
+        router.push("/dashboard");
+        return;
+      }
       setStep("cv");
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Something went wrong");
