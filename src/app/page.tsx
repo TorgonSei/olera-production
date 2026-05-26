@@ -17,7 +17,6 @@ import {
   FileText,
   ClipboardList,
   Users,
-  Globe,
   CheckCircle,
 } from "lucide-react";
 
@@ -25,7 +24,7 @@ import {
 const CANDIDATE_FAQ = [
   {
     q: "Do I need experience?",
-    a: "It depends on the role. The practical tasks are how we understand what you can actually do — not just what your CV says.",
+    a: "Depends on the role. The practical tasks show what you can do — not just what your CV says.",
   },
   {
     q: "Is it free?",
@@ -33,15 +32,15 @@ const CANDIDATE_FAQ = [
   },
   {
     q: "What happens after I upload my CV?",
-    a: "We build your profile, ask for a few missing details, then you complete short practical tasks to show your communication, judgment, and work style. Most candidates move through the full pathway in a few days.",
+    a: "We build your profile, ask a few questions, then you do short practical tasks. Most candidates finish in a few days.",
   },
   {
     q: "Will employers see my contact details?",
-    a: "No. Your phone number and email stay protected until there is an active hiring process and the right steps are completed.",
+    a: "No. Contact details stay private until you're in an active process and have approved it.",
   },
   {
     q: "What if I am not ready yet?",
-    a: "You still get a profile and clear feedback. We show you exactly what to improve. Not everyone reaches Employer Ready on the first pass — that is expected.",
+    a: "You get a profile and clear feedback on what to improve. Not everyone reaches Employer Ready first time — that's expected.",
   },
 ];
 
@@ -92,25 +91,25 @@ const STEPS = [
   {
     n: "01",
     title: "Upload your CV",
-    body: "We read your CV and build your Olera profile automatically.",
+    body: "We read your CV and build your profile automatically.",
     icon: <Upload size={20} />,
   },
   {
     n: "02",
     title: "Complete your profile",
-    body: "Add your availability, pay expectations, tools, and whether you are open to remote or international work. Takes about 5 minutes.",
+    body: "Availability, salary, tools, and remote preferences. About 5 minutes.",
     icon: <FileText size={20} />,
   },
   {
     n: "03",
     title: "Show your work",
-    body: "Complete short practical tasks — write a customer reply, handle a judgment scenario, organize some instructions. This is how we understand what you can actually do.",
+    body: "Write a customer reply, handle a judgment scenario. We see what you can actually do.",
     icon: <ClipboardList size={20} />,
   },
   {
     n: "04",
-    title: "Get matched to real roles",
-    body: "When your profile fits a live role, Olera introduces you. We do not send random applications.",
+    title: "Get matched",
+    body: "When you fit a live role, Olera introduces you. No random applications.",
     icon: <Users size={20} />,
   },
 ];
@@ -142,10 +141,6 @@ export default function HomePage() {
                   <Badge variant="sage" dot>
                     Remote roles · International employers
                   </Badge>
-                  <Badge variant="sand">
-                    <Globe size={11} className="mr-1" />
-                    Nairobi · Kenya
-                  </Badge>
                 </div>
 
                 {/* Headline */}
@@ -156,10 +151,7 @@ export default function HomePage() {
 
                 {/* Sub-hero */}
                 <p className="text-base sm:text-lg text-moss leading-relaxed mb-8">
-                  Olera connects people who can support customers, manage details,
-                  communicate clearly, and work reliably with international
-                  companies. Upload your CV. We&apos;ll build your profile and
-                  match you when there is a fit.
+                  Upload your CV. We build your profile and match you to roles where you fit.
                 </p>
 
                 {/* CTAs */}
@@ -232,12 +224,6 @@ export default function HomePage() {
               <h2 className="font-display font-bold text-4xl sm:text-5xl text-char">
                 Can I apply?
               </h2>
-              <p className="mt-4 text-moss text-lg max-w-xl">
-                Yes, if you are interested in customer operations work. Roles cover
-                customer support, email and chat support, customer success, virtual
-                assistant work, executive assistant work, and remote admin and
-                operations support.
-              </p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -264,10 +250,6 @@ export default function HomePage() {
               <h2 className="font-display font-bold text-4xl sm:text-5xl text-char leading-tight">
                 One clear focus.
               </h2>
-              <p className="mt-4 text-moss text-lg max-w-xl">
-                We only focus on customer operations work. That means roles where
-                communication, judgment, organization, and follow-through matter.
-              </p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -381,11 +363,6 @@ export default function HomePage() {
               <h2 className="font-display font-bold text-3xl sm:text-4xl text-char leading-tight">
                 Four levels. Progress at your own pace.
               </h2>
-              <p className="mt-3 text-moss max-w-xl">
-                Each level unlocks more. Most candidates reach Employer Ready in
-                a few days. Remote Ready takes more, but it is the strongest
-                signal you can build.
-              </p>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -393,28 +370,28 @@ export default function HomePage() {
                 {
                   n: "01",
                   status: "Profile Built",
-                  body: "CV uploaded. Profile generated. Basic missing fields filled. You are in the system — not yet visible to employers.",
+                  body: "CV uploaded, profile built. Not yet visible to employers.",
                   dark: false,
                   accent: false,
                 },
                 {
                   n: "02",
                   status: "Assessed",
-                  body: "Practical tasks complete. We have enough signal to understand how you write, think, and handle customer situations.",
+                  body: "Practical tasks done. We understand how you write, think, and handle customers.",
                   dark: false,
                   accent: false,
                 },
                 {
                   n: "03",
                   status: "Employer Ready",
-                  body: "You meet the threshold for at least one role track. You can now be shortlisted and matched to relevant roles.",
+                  body: "Meets the threshold. Visible to employers and open for matching.",
                   dark: false,
                   accent: true,
                 },
                 {
                   n: "04",
                   status: "Remote Ready",
-                  body: "Strong written communication, reliable availability, remote setup confirmed, and AI-enabled work habits shown. The most valuable status for international roles.",
+                  body: "Strong comms, verified remote setup, AI-ready habits. Highest signal for international roles.",
                   dark: true,
                   accent: false,
                 },
@@ -483,10 +460,7 @@ export default function HomePage() {
                   hundreds of CVs.
                 </h2>
                 <p className="text-cream/70 text-lg leading-relaxed mb-8 max-w-lg">
-                  Olera gives you a small shortlist of candidates who have already
-                  moved through a structured readiness pathway — practical tasks
-                  that show how they write, handle customers, organize work, and
-                  use digital tools. You see the signal, not just the CV.
+                  A small shortlist of candidates already through our readiness pathway. You see the signal, not just the CV.
                 </p>
                 <p className="text-cream/50 text-sm mb-8 font-mono">
                   Review free · Interview free · Pay only when you hire
@@ -504,15 +478,15 @@ export default function HomePage() {
                 {[
                   {
                     title: "Assessed before interview",
-                    body: "Candidates complete customer operations scenarios, tool checks, and a profile review before they are presented.",
+                    body: "Scenarios, tool checks, and a profile review — before they're presented.",
                   },
                   {
                     title: "Small shortlists",
-                    body: "We do not send a pile of CVs. We send a focused shortlist matched to your role.",
+                    body: "A focused shortlist matched to your role. Not a pile of CVs.",
                   },
                   {
                     title: "Remote-readiness checked",
-                    body: "We check availability, work setup, communication quality, and remote preference before matching candidates.",
+                    body: "Availability, work setup, comms quality, and remote preference — verified before matching.",
                   },
                   {
                     title: "One flat fee on hire",
@@ -543,13 +517,9 @@ export default function HomePage() {
                 <div className="mb-6" aria-hidden="true">
                   <Olera3A size={36} color={COLORS.amber} />
                 </div>
-                <h2 className="font-display font-bold text-3xl text-char mb-3">
+                <h2 className="font-display font-bold text-3xl text-char mb-8 flex-1">
                   Start with your CV.
                 </h2>
-                <p className="text-moss leading-relaxed mb-8 flex-1">
-                  Upload your CV. Olera will build your profile, show where you
-                  fit, and match you when the right role comes in.
-                </p>
                 <Button size="lg" variant="primary" as="a" href="/join" fullWidth>
                   Upload your CV — it&apos;s free
                   <ArrowRight size={18} />
