@@ -14,7 +14,7 @@ Extract the following from this CV and return ONLY valid JSON (no markdown, no e
   "location_city": "string",
   "location_country": "string",
   "years_experience": number,
-  "summary": "2-3 sentence professional summary",
+  "summary": "2-3 sentences covering: years of experience, key tools, role type, and one honest signal about fit (e.g. strong, junior, no relevant ops experience). Useful for a recruiter scanning quickly.",
   "tools": ["array of software tools mentioned"],
   "specialisations": ["array of specialisations, e.g. 'B2B SaaS', 'Technical Support', 'Churn Prevention'"],
   "languages": ["array of languages spoken"],
