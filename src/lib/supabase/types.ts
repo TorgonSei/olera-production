@@ -13,7 +13,7 @@ export type Json =
 
 /* ─── Enums ─────────────────────────────────────────────────────────────── */
 export type TrackType = "support" | "success" | "assistant";
-export type ReadinessLevel = "ready" | "near_ready" | "developing" | "unscreened";
+export type ReadinessLevel = "ready" | "remote_ready" | "near_ready" | "developing" | "unscreened";
 export type FitLevel = "strong" | "possible" | "stretch" | "poor";
 export type CandidateStatus =
   | "registered"
