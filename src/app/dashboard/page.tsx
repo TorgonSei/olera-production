@@ -15,10 +15,12 @@ const PATHWAY = [
 ];
 
 function getPathwayIndex(status: string, readiness: string) {
-  if (status === "placed")                                       return 3;
-  if (readiness === "ready" || readiness === "remote_ready")    return 2;
-  if (status === "gaps_filled" || status === "assessed" ||
-      status === "review_pending" || status === "active")       return 1;
+  if (status === "placed")                                                  return 3;
+  if (readiness === "ready" || readiness === "remote_ready")                return 2;
+  if (status === "gaps_filled"        || status === "assessment_invited" ||
+      status === "assessment_complete"|| status === "interview_invited"  ||
+      status === "assessed"           || status === "review_pending"     ||
+      status === "active")                                                  return 1;
   return 0;
 }
 
@@ -60,6 +62,33 @@ function getNextAction(
       icon: <CheckCircle size={22} className="text-sage" />,
       heading: "Profile received",
       body: "We're reviewing your profile and will be in touch if there's a match. This usually takes a few days.",
+      cta: profileSlug ? "View public profile" : "View your profile",
+      href: profileSlug ? `/p/${profileSlug}` : `/profile/${candidateId}/review`,
+    };
+  }
+  if (status === "assessment_invited") {
+    return {
+      icon: <ClipboardList size={22} className="text-amber" />,
+      heading: "Complete your assessment",
+      body: "We'd like to see how you think and communicate. The assessment takes about 20 minutes.",
+      cta: "Start assessment",
+      href: `/assessment/${candidateId}`,
+    };
+  }
+  if (status === "assessment_complete") {
+    return {
+      icon: <CheckCircle size={22} className="text-sage" />,
+      heading: "Assessment received",
+      body: "Thanks for completing the assessment. We're reviewing your submission and will be in touch about next steps.",
+      cta: profileSlug ? "View public profile" : "View your profile",
+      href: profileSlug ? `/p/${profileSlug}` : `/profile/${candidateId}/review`,
+    };
+  }
+  if (status === "interview_invited") {
+    return {
+      icon: <Circle size={22} className="text-amber" />,
+      heading: "Interview stage",
+      body: "You've been invited to interview with Olera. We'll send details on timing and format to your email shortly.",
       cta: profileSlug ? "View public profile" : "View your profile",
       href: profileSlug ? `/p/${profileSlug}` : `/profile/${candidateId}/review`,
     };

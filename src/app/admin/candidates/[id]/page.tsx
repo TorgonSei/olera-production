@@ -78,7 +78,7 @@ export default async function AdminCandidateDetailPage({
           </div>
 
           {/* Action buttons (client component) */}
-          <AdminActionButtons candidateId={c.id} currentReadiness={c.readiness} />
+          <AdminActionButtons candidateId={c.id} currentStatus={c.status} currentReadiness={c.readiness} />
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

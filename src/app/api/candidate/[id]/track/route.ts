@@ -11,11 +11,11 @@ export async function GET(
 
     const { data } = await supabase
       .from("candidates")
-      .select("track")
+      .select("track, status")
       .eq("id", id)
       .single();
 
-    return NextResponse.json({ track: data?.track ?? "support" });
+    return NextResponse.json({ track: data?.track ?? "support", status: data?.status ?? null });
   } catch {
     return NextResponse.json({ track: "support" });
   }

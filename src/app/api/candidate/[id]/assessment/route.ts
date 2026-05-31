@@ -155,7 +155,7 @@ export async function POST(
     await supabase
       .from("candidates")
       .update({
-        status: "assessed",
+        status: "assessment_complete",
         assessment_completed_at: new Date().toISOString(),
         assessment_score: scoring.total_score,
         assessment_tier: scoring.tier,

@@ -145,13 +145,18 @@ export default function AssessmentPage() {
   // Tool ratings (0-3)
   const [toolRatings, setToolRatings] = useState<Record<string, number>>({});
 
-  // Load candidate track
+  // Load candidate track + gate on assessment_invited status
   useEffect(() => {
     fetch(`/api/candidate/${id}/track`)
       .then((r) => r.json())
-      .then((d) => { if (d.track) setTrack(d.track); })
+      .then((d) => {
+        if (d.track) setTrack(d.track);
+        if (d.status && d.status !== "assessment_invited") {
+          router.replace("/dashboard");
+        }
+      })
       .catch(() => {});
-  }, [id]);
+  }, [id, router]);
 
   const scenarios = SCENARIOS[track] ?? SCENARIOS.support;
   const tools = TOOLS_BY_TRACK[track] ?? TOOLS_BY_TRACK.support;
