@@ -59,7 +59,7 @@ function JoinPageInner() {
               <p className="text-moss mb-2">We sent a sign-in link to</p>
               <p className="font-semibold text-char mb-6">{email}</p>
               <p className="text-sm text-moss/70 mb-8">
-                Click the link to continue uploading your CV. It expires in 1 hour.
+                Click the link to access your profile. It expires in 1 hour.
               </p>
               <button
                 className="text-sm text-amber hover:text-terra transition-colors font-medium"
@@ -75,10 +75,13 @@ function JoinPageInner() {
                   <Mail size={20} className="text-amber" />
                 </div>
                 <h1 className="font-display font-bold text-3xl text-char mb-2">
-                  Submit your CV
+                  Sign in or get started
                 </h1>
                 <p className="text-moss">
-                  Create your profile and upload your CV. We&apos;ll review it and be in touch.
+                  Enter your name and email. We&apos;ll send you a secure link — no password needed.
+                </p>
+                <p className="text-sm text-moss/60 mt-2">
+                  Already submitted your CV? Just enter your email and you&apos;ll go straight to your profile.
                 </p>
               </div>
 
