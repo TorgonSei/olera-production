@@ -166,8 +166,8 @@ export default function EmployerPage() {
         <section className="py-24 bg-cream">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
-            {/* Intro block — heading + body as a unit */}
-            <div className="max-w-2xl mb-14">
+            {/* Centered intro */}
+            <div className="max-w-2xl mx-auto text-center mb-6">
               <h2 className="font-display font-bold text-4xl sm:text-5xl text-char leading-tight mb-6">
                 Why Kenya works for customer operations.
               </h2>
@@ -184,11 +184,13 @@ export default function EmployerPage() {
                   who can write clearly, handle customers, stay organized, use
                   digital tools, and work reliably with global teams.
                 </p>
-                <p className="font-semibold text-char">
-                  Kenya has the talent. Olera adds the signal.
-                </p>
               </div>
             </div>
+
+            {/* Kicker — sits just above the cards it introduces */}
+            <p className="text-center font-semibold text-char mb-10">
+              Kenya has the talent. Olera adds the signal.
+            </p>
 
             {/* Evidence cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
