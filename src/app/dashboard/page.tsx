@@ -3,21 +3,22 @@ import { createClient, createServiceClient } from "@/lib/supabase/server";
 import { OleraLockupH } from "@/components/brand/Mark";
 import { Button } from "@/components/ui/Button";
 import { Footer } from "@/components/layout/Footer";
-import { ArrowRight, CheckCircle, Circle, Upload, ClipboardList, Star, Eye } from "lucide-react";
+import { ArrowRight, CheckCircle, Circle, Upload, ClipboardList, Eye } from "lucide-react";
 import Link from "next/link";
 
 /* ─── Pathway steps ─────────────────────────────────────────────────────── */
 const PATHWAY = [
   { key: "profile",  n: "01", label: "Profile Built" },
-  { key: "assessed", n: "02", label: "Assessed" },
-  { key: "employer", n: "03", label: "Employer Ready" },
-  { key: "remote",   n: "04", label: "Remote Ready" },
+  { key: "review",   n: "02", label: "Under Review" },
+  { key: "matched",  n: "03", label: "Matched" },
+  { key: "placed",   n: "04", label: "Hired" },
 ];
 
 function getPathwayIndex(status: string, readiness: string) {
-  if (readiness === "remote_ready") return 3;
-  if (readiness === "ready")        return 2;
-  if (status === "assessed")        return 1;
+  if (status === "placed")                                       return 3;
+  if (readiness === "ready" || readiness === "remote_ready")    return 2;
+  if (status === "gaps_filled" || status === "assessed" ||
+      status === "review_pending" || status === "active")       return 1;
   return 0;
 }
 
@@ -54,13 +55,13 @@ function getNextAction(
       href: `/profile/${candidateId}/gaps`,
     };
   }
-  if (status === "gaps_filled") {
+  if (status === "gaps_filled" || status === "review_pending") {
     return {
-      icon: <Star size={22} className="text-amber" />,
-      heading: "Show your work",
-      body: "Help employers understand how you think, communicate, and handle real customer situations.",
-      cta: "Show your work",
-      href: `/assessment/${candidateId}`,
+      icon: <CheckCircle size={22} className="text-sage" />,
+      heading: "Profile received",
+      body: "We're reviewing your profile and will be in touch if there's a match. This usually takes a few days.",
+      cta: profileSlug ? "View public profile" : "View your profile",
+      href: profileSlug ? `/p/${profileSlug}` : `/profile/${candidateId}/review`,
     };
   }
   if (status === "assessed" && readiness === "developing") {
