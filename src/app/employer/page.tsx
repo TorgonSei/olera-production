@@ -162,11 +162,13 @@ export default function EmployerPage() {
         {/* ── Why Kenya ─────────────────────────────────────────────────── */}
         <section className="py-20 bg-cream">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="max-w-2xl mb-14">
-              <h2 className="font-display font-bold text-4xl sm:text-5xl text-char leading-tight mb-6">
+
+            {/* Intro */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16 items-end">
+              <h2 className="font-display font-bold text-4xl sm:text-5xl text-char leading-tight">
                 Why Kenya works for customer operations.
               </h2>
-              <div className="space-y-4 text-moss text-lg leading-relaxed">
+              <div className="space-y-4 text-moss text-base leading-relaxed">
                 <p>
                   Kenya is not an untested remote-work market. It is one of
                   East Africa&apos;s strongest digital economies, with a growing
@@ -179,12 +181,15 @@ export default function EmployerPage() {
                   who can write clearly, handle customers, stay organized, use
                   digital tools, and work reliably with global teams.
                 </p>
-                <p className="text-char font-medium">
-                  Kenya has the talent. Olera adds the signal.
-                </p>
               </div>
             </div>
 
+            {/* Kicker — thesis before evidence */}
+            <p className="font-display font-semibold text-xl text-char mb-8 pb-8 border-b border-mist">
+              Kenya has the talent. Olera adds the signal.
+            </p>
+
+            {/* Evidence cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               {WHY_KENYA.map((point) => (
                 <div
@@ -196,6 +201,7 @@ export default function EmployerPage() {
                 </div>
               ))}
             </div>
+
           </div>
         </section>
 
