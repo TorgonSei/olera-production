@@ -16,7 +16,6 @@ import {
   FileText,
   ClipboardList,
   Users,
-  CheckCircle,
 } from "lucide-react";
 
 /* ─── Candidate FAQ ──────────────────────────────────────────────────────── */
@@ -158,10 +157,7 @@ export default function HomePage() {
                 </div>
 
                 {/* Trust line */}
-                <p className="mt-5 text-sm text-moss/70 flex items-center gap-2">
-                  <CheckCircle size={14} className="text-sage flex-shrink-0" />
-                  Free for candidates · No spam · You control your profile
-                </p>
+                <p className="mt-5 text-xs text-moss/50 font-mono">Free for candidates.</p>
               </div>
 
               {/* Right — stats 2×2 */}
