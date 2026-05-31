@@ -167,7 +167,7 @@ export default function EmployerPage() {
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
             {/* Centered intro */}
-            <div className="max-w-2xl mx-auto text-center mb-6">
+            <div className="max-w-2xl mx-auto text-center mb-14">
               <h2 className="font-display font-bold text-4xl sm:text-5xl text-char leading-tight mb-6">
                 Why Kenya works for customer operations.
               </h2>
@@ -187,10 +187,10 @@ export default function EmployerPage() {
               </div>
             </div>
 
-            {/* Kicker — sits just above the cards it introduces */}
-            <p className="font-semibold text-char mb-10">
+            {/* Kicker — heading for the evidence cards */}
+            <h3 className="font-display font-bold text-2xl text-char mb-8">
               Kenya has the talent. Olera adds the signal.
-            </p>
+            </h3>
 
             {/* Evidence cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
