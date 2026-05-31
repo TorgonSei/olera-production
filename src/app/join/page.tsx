@@ -1,12 +1,12 @@
 "use client";
 
 import React, { useState, Suspense } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { OleraLockupH, COLORS } from "@/components/brand/Mark";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { cn } from "@/lib/cn";
-import { ArrowRight, Mail, ShieldCheck } from "lucide-react";
+import { ArrowRight, Mail, CheckCircle } from "lucide-react";
 
 /* ─── Track config ──────────────────────────────────────────────────────── */
 const TRACKS = [
@@ -31,7 +31,7 @@ const TRACKS = [
 ];
 
 type Track = (typeof TRACKS)[number]["id"];
-type Step = "track" | "details" | "otp";
+type Step = "track" | "details" | "sent";
 
 export default function JoinPage() {
   return (
@@ -42,17 +42,15 @@ export default function JoinPage() {
 }
 
 function JoinPageInner() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const initialTrack = (searchParams.get("track") as Track) ?? null;
 
-  const [step, setStep] = useState<Step>(initialTrack ? "details" : "track");
+  const [step, setStep]   = useState<Step>(initialTrack ? "details" : "track");
   const [track, setTrack] = useState<Track | null>(initialTrack);
-  const [name, setName] = useState("");
+  const [name, setName]   = useState("");
   const [email, setEmail] = useState("");
-  const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError]     = useState("");
 
   /* ── Step 1: select track ─────────────────────────────────────────────── */
   const handleTrackSelect = (t: Track) => {
@@ -60,8 +58,8 @@ function JoinPageInner() {
     setStep("details");
   };
 
-  /* ── Step 2: send email OTP ───────────────────────────────────────────── */
-  const handleSendOtp = async () => {
+  /* ── Step 2: send magic link ──────────────────────────────────────────── */
+  const handleSendLink = async () => {
     setError("");
     if (!name.trim()) { setError("Please enter your name."); return; }
     if (!email.trim() || !email.includes("@")) { setError("Please enter a valid email address."); return; }
@@ -70,30 +68,10 @@ function JoinPageInner() {
       const res = await fetch("/api/auth/otp/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim(), name: name.trim() }),
+        body: JSON.stringify({ email: email.trim(), name: name.trim(), track }),
       });
-      if (!res.ok) throw new Error((await res.json()).error ?? "Failed to send code");
-      setStep("otp");
-    } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : "Something went wrong");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  /* ── Step 3: verify OTP ───────────────────────────────────────────────── */
-  const handleVerifyOtp = async () => {
-    setError("");
-    if (otp.length < 6) { setError("Enter the verification code we sent you."); return; }
-    setLoading(true);
-    try {
-      const res = await fetch("/api/auth/otp/verify", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim(), token: otp, track, name: name.trim() }),
-      });
-      if (!res.ok) throw new Error((await res.json()).error ?? "Invalid code");
-      router.push("/dashboard");
+      if (!res.ok) throw new Error((await res.json()).error ?? "Failed to send link");
+      setStep("sent");
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Something went wrong");
     } finally {
@@ -102,7 +80,7 @@ function JoinPageInner() {
   };
 
   /* ── Progress ─────────────────────────────────────────────────────────── */
-  const STEP_ORDER: Step[] = ["track", "details", "otp"];
+  const STEP_ORDER: Step[] = ["track", "details", "sent"];
   const stepIndex = STEP_ORDER.indexOf(step);
 
   return (
@@ -135,7 +113,7 @@ function JoinPageInner() {
             <div>
               <div className="mb-8">
                 <h1 className="font-display font-bold text-3xl text-char mb-2">
-                  What's your area?
+                  What&apos;s your area?
                 </h1>
                 <p className="text-moss">
                   Choose the track that best matches your experience.
@@ -179,10 +157,10 @@ function JoinPageInner() {
                   <Mail size={20} className="text-amber" />
                 </div>
                 <h1 className="font-display font-bold text-3xl text-char mb-2">
-                  Let's get you in
+                  Let&apos;s get you in
                 </h1>
                 <p className="text-moss">
-                  We'll send a code to your email. No password needed.
+                  We&apos;ll email you a sign-in link. No password needed.
                 </p>
               </div>
 
@@ -193,7 +171,7 @@ function JoinPageInner() {
                   placeholder="Ada Okonkwo"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && handleSendOtp()}
+                  onKeyDown={(e) => e.key === "Enter" && handleSendLink()}
                   required
                   autoFocus
                 />
@@ -203,12 +181,13 @@ function JoinPageInner() {
                   placeholder="ada@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && handleSendOtp()}
+                  onKeyDown={(e) => e.key === "Enter" && handleSendLink()}
                   error={error}
                   required
                 />
-                <Button variant="primary" size="lg" fullWidth loading={loading} onClick={handleSendOtp}>
-                  Send verification code
+                <Button variant="primary" size="lg" fullWidth loading={loading} onClick={handleSendLink}>
+                  Send sign-in link
+                  {!loading && <ArrowRight size={16} />}
                 </Button>
                 {track && (
                   <button
@@ -222,62 +201,28 @@ function JoinPageInner() {
             </div>
           )}
 
-          {/* ── STEP: OTP ───────────────────────────────────────────────── */}
-          {step === "otp" && (
-            <div>
-              <div className="mb-8">
-                <div className="w-12 h-12 rounded-full bg-sage/10 flex items-center justify-center mb-4">
-                  <ShieldCheck size={20} className="text-sage" />
-                </div>
-                <h1 className="font-display font-bold text-3xl text-char mb-2">
-                  Check your email
-                </h1>
-                <p className="text-moss">
-                  We sent a code to <span className="font-medium text-char">{email}</span>.
-                  It may take a minute.
-                </p>
+          {/* ── STEP: Sent ──────────────────────────────────────────────── */}
+          {step === "sent" && (
+            <div className="text-center">
+              <div className="w-14 h-14 rounded-full bg-sage/10 flex items-center justify-center mb-6 mx-auto">
+                <CheckCircle size={28} className="text-sage" />
               </div>
-
-              <div className="space-y-4">
-                <Input
-                  label="Verification code"
-                  type="text"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  maxLength={6}
-                  placeholder="000000"
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
-                  onKeyDown={(e) => e.key === "Enter" && handleVerifyOtp()}
-                  error={error}
-                  autoFocus
-                  className="text-center text-2xl font-mono tracking-widest"
-                />
-                <Button
-                  variant="primary"
-                  size="lg"
-                  fullWidth
-                  loading={loading}
-                  onClick={handleVerifyOtp}
-                  disabled={otp.length < 6}
-                >
-                  Verify and continue
-                </Button>
-                <div className="flex items-center justify-between text-sm">
-                  <button
-                    className="text-moss hover:text-char transition-colors"
-                    onClick={() => { setStep("details"); setError(""); setOtp(""); }}
-                  >
-                    ← Wrong email?
-                  </button>
-                  <button
-                    className="text-amber hover:text-terra transition-colors font-medium"
-                    onClick={handleSendOtp}
-                  >
-                    Resend code
-                  </button>
-                </div>
-              </div>
+              <h1 className="font-display font-bold text-3xl text-char mb-3">
+                Check your inbox
+              </h1>
+              <p className="text-moss mb-2">
+                We sent a sign-in link to
+              </p>
+              <p className="font-semibold text-char mb-6">{email}</p>
+              <p className="text-sm text-moss/70 mb-8">
+                Click the link in the email to continue. It expires in 1 hour.
+              </p>
+              <button
+                className="text-sm text-amber hover:text-terra transition-colors font-medium"
+                onClick={() => { setStep("details"); setError(""); }}
+              >
+                Wrong email? Go back
+              </button>
             </div>
           )}
         </div>
