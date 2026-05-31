@@ -202,12 +202,6 @@ export default async function PublicProfilePage({
                 value: c.gap_contract_pref ? CONTRACT_LABELS[c.gap_contract_pref] : null,
               },
               {
-                label: "Salary range",
-                value: c.gap_salary_min_usd && c.gap_salary_max_usd
-                  ? `$${c.gap_salary_min_usd.toLocaleString()}–$${c.gap_salary_max_usd.toLocaleString()}`
-                  : null,
-              },
-              {
                 label: "Remote",
                 value: "Remote-ready",
               },

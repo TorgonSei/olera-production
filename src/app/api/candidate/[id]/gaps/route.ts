@@ -31,24 +31,12 @@ export async function PATCH(
 
     const body = await req.json();
 
-    // Validate salary range
-    if (body.gap_salary_min_usd && body.gap_salary_max_usd) {
-      if (Number(body.gap_salary_min_usd) > Number(body.gap_salary_max_usd)) {
-        return NextResponse.json(
-          { error: "Minimum salary cannot exceed maximum" },
-          { status: 400 }
-        );
-      }
-    }
-
     const { error: updateError } = await supabase
       .from("candidates")
       .update({
         full_name: body.full_name,
         gap_target_role: body.gap_target_role,
         gap_english_level: body.gap_english_level,
-        gap_salary_min_usd: body.gap_salary_min_usd,
-        gap_salary_max_usd: body.gap_salary_max_usd,
         gap_availability_weeks: body.gap_availability_weeks,
         gap_contract_pref: body.gap_contract_pref,
         status: "gaps_filled",

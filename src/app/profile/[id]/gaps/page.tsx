@@ -16,8 +16,6 @@ interface GapForm {
   full_name: string;
   target_role: string;
   english_level: EnglishLevel | "";
-  salary_min_usd: string;
-  salary_max_usd: string;
   availability_weeks: string;
   contract_pref: ContractPref | "";
 }
@@ -56,8 +54,6 @@ export default function GapsPage() {
     full_name: "",
     target_role: "",
     english_level: "",
-    salary_min_usd: "",
-    salary_max_usd: "",
     availability_weeks: "",
     contract_pref: "",
   });
@@ -75,8 +71,7 @@ export default function GapsPage() {
   const handleSubmit = async () => {
     setError("");
     const required: (keyof GapForm)[] = [
-      "full_name", "english_level", "salary_min_usd", "salary_max_usd",
-      "availability_weeks", "contract_pref",
+      "full_name", "english_level", "availability_weeks", "contract_pref",
     ];
     const missing = required.filter((k) => !form[k]);
     if (missing.length > 0) {
@@ -93,8 +88,6 @@ export default function GapsPage() {
           full_name: form.full_name,
           gap_target_role: form.target_role || null,
           gap_english_level: form.english_level,
-          gap_salary_min_usd: Number(form.salary_min_usd),
-          gap_salary_max_usd: Number(form.salary_max_usd),
           gap_availability_weeks: Number(form.availability_weeks),
           gap_contract_pref: form.contract_pref,
           status: "gaps_filled",
@@ -183,37 +176,6 @@ export default function GapsPage() {
                 </button>
               ))}
             </div>
-          </section>
-
-          {/* Salary range */}
-          <section>
-            <label className="text-sm font-medium text-char block mb-2">
-              Salary expectation (USD / month){" "}
-              <span className="text-terra ml-1" aria-hidden>*</span>
-            </label>
-            <div className="grid grid-cols-2 gap-3">
-              <Input
-                placeholder="Min, e.g. 1200"
-                type="number"
-                min={0}
-                value={form.salary_min_usd}
-                onChange={(e) => set("salary_min_usd", e.target.value)}
-                prefix={<span className="text-xs font-mono">$</span>}
-                label=""
-              />
-              <Input
-                placeholder="Max, e.g. 2000"
-                type="number"
-                min={0}
-                value={form.salary_max_usd}
-                onChange={(e) => set("salary_max_usd", e.target.value)}
-                prefix={<span className="text-xs font-mono">$</span>}
-                label=""
-              />
-            </div>
-            <p className="text-xs text-moss mt-1.5">
-              Only shared with employers after you approve. We match within ±15% of your range.
-            </p>
           </section>
 
           {/* Availability */}

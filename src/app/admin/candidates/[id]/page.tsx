@@ -131,8 +131,7 @@ export default async function AdminCandidateDetailPage({
                   { label: "English",        value: c.gap_english_level },
                   { label: "Contract",       value: c.gap_contract_pref?.replace("_", "-") },
                   { label: "Available",      value: c.gap_availability_weeks === 0 ? "Immediately" : c.gap_availability_weeks ? `${c.gap_availability_weeks}w` : null },
-                  { label: "Salary min",     value: c.gap_salary_min_usd ? `$${c.gap_salary_min_usd?.toLocaleString()}` : null },
-                  { label: "Salary max",     value: c.gap_salary_max_usd ? `$${c.gap_salary_max_usd?.toLocaleString()}` : null },
+
                 ].map(({ label, value }) => (
                   <div key={label}>
                     <span className="text-xs text-moss/60 font-mono block mb-0.5">{label}</span>
