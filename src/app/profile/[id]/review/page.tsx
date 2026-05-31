@@ -8,33 +8,55 @@ import { Button } from "@/components/ui/Button";
 import { CheckCircle, Clock, Globe, Briefcase, Star, Wrench } from "lucide-react";
 import { Footer } from "@/components/layout/Footer";
 
-/* ─── Readiness config ──────────────────────────────────────────────────── */
-const READINESS_CONFIG = {
-  ready: {
-    label: "Employer Ready",
-    color: "sage" as const,
-    description: "Your profile is active and being matched to live roles.",
-    icon: <CheckCircle size={16} />,
-  },
-  near_ready: {
-    label: "Assessed",
-    color: "amber" as const,
-    description: "Under review. Our team may reach out with a few questions before activating your profile.",
-    icon: <Clock size={16} />,
-  },
-  developing: {
-    label: "Keep building",
-    color: "moss" as const,
-    description: "Good start — review your feedback below and reapply when ready.",
-    icon: <Clock size={16} />,
-  },
-  unscreened: {
-    label: "Profile Built",
+/* ─── Status config ─────────────────────────────────────────────────────── */
+function getStatusConfig(status: string, readiness: string) {
+  if (readiness === "ready" || readiness === "remote_ready") {
+    return {
+      label: "Active",
+      color: "sage" as const,
+      description: "Your profile is live and being matched to roles. We'll reach out when there's a fit.",
+      icon: <CheckCircle size={16} />,
+    };
+  }
+  if (status === "assessment_invited") {
+    return {
+      label: "Assessment invited",
+      color: "amber" as const,
+      description: "Check your email — we've sent you a link to complete your assessment.",
+      icon: <Clock size={16} />,
+    };
+  }
+  if (status === "assessment_complete") {
+    return {
+      label: "Assessment received",
+      color: "amber" as const,
+      description: "Thanks for completing the assessment. We're reviewing your submission.",
+      icon: <Clock size={16} />,
+    };
+  }
+  if (status === "interview_invited") {
+    return {
+      label: "Interview stage",
+      color: "amber" as const,
+      description: "You've been invited to interview. Check your email for details.",
+      icon: <Clock size={16} />,
+    };
+  }
+  if (status === "assessed" || readiness === "near_ready") {
+    return {
+      label: "Under review",
+      color: "amber" as const,
+      description: "Our team is reviewing your profile. We'll be in touch about next steps.",
+      icon: <Clock size={16} />,
+    };
+  }
+  return {
+    label: "Profile received",
     color: "sand" as const,
-    description: "CV received. Complete your pathway tasks to reach Employer Ready.",
+    description: "We've received your profile and will be in touch if there's a match.",
     icon: <Clock size={16} />,
-  },
-};
+  };
+}
 
 const TRACK_LABELS: Record<string, string> = {
   support:   "Customer Support",
@@ -59,8 +81,9 @@ export default async function ProfileReviewPage({
 
   if (!candidate) notFound();
 
-  const readiness = candidate.readiness ?? "unscreened";
-  const config = READINESS_CONFIG[readiness as keyof typeof READINESS_CONFIG];
+  const status = (candidate.status ?? "registered") as string;
+  const readiness = (candidate.readiness ?? "unscreened") as string;
+  const config = getStatusConfig(status, readiness);
   const trackLabel = TRACK_LABELS[candidate.track] ?? candidate.track;
 
   const completeness = candidate.profile_completeness ?? 0;
@@ -78,22 +101,20 @@ export default async function ProfileReviewPage({
       </header>
 
       <div className="max-w-2xl mx-auto px-4 py-10">
-        {/* Readiness Pathway progress */}
+        {/* Pathway progress */}
         {(() => {
           const PATHWAY = [
             { n: "01", label: "Profile Built" },
-            { n: "02", label: "Assessed" },
-            { n: "03", label: "Employer Ready" },
-            { n: "04", label: "Remote Ready" },
+            { n: "02", label: "Under Review" },
+            { n: "03", label: "Matched" },
+            { n: "04", label: "Hired" },
           ];
-          // Use status + readiness to determine step.
-          // unscreened = Profile Built (step 0), gaps_filled still 0,
-          // assessed (any readiness) = Assessed (step 1),
-          // ready = Employer Ready (step 2).
-          const status = candidate.status as string;
           const activeIndex =
-            readiness === "ready" ? 2 :
-            status === "assessed" || readiness === "near_ready" ? 1 :
+            status === "placed" ? 3 :
+            readiness === "ready" || readiness === "remote_ready" ? 2 :
+            status === "gaps_filled" || status === "assessment_invited" ||
+            status === "assessment_complete" || status === "interview_invited" ||
+            status === "assessed" || status === "review_pending" || status === "active" ? 1 :
             0;
 
           return (
@@ -299,40 +320,11 @@ export default async function ProfileReviewPage({
           </Card>
         )}
 
-        {/* What's missing */}
-        {completeness < 90 && (
-          <Card variant="outlined" className="mb-8">
-            <h3 className="font-semibold text-char mb-3">Complete your profile</h3>
-            <div className="space-y-2">
-              {!candidate.full_name && (
-                <div className="flex items-center gap-2 text-sm text-moss">
-                  <div className="w-4 h-4 rounded-full border-2 border-mist flex-shrink-0" />
-                  Add your full name
-                </div>
-              )}
-              {!(candidate.tools ?? []).length && (
-                <div className="flex items-center gap-2 text-sm text-moss">
-                  <div className="w-4 h-4 rounded-full border-2 border-mist flex-shrink-0" />
-                  Tools detected from your CV
-                </div>
-              )}
-              {!candidate.assessment_score && (
-                <div className="flex items-center gap-2 text-sm text-amber font-medium">
-                  <div className="w-4 h-4 rounded-full border-2 border-amber flex-shrink-0" />
-                  Show your work to reach Employer Ready (+25%)
-                </div>
-              )}
-            </div>
-          </Card>
-        )}
-
         {/* Actions */}
         <div className="flex flex-col sm:flex-row gap-3">
-          {!candidate.assessment_score && (
-            <Button variant="primary" size="lg" as="a" href={`/assessment/${id}`} fullWidth>
-              Show your work
-            </Button>
-          )}
+          <Button variant="outline" size="lg" as="a" href="/dashboard" fullWidth>
+            Back to dashboard
+          </Button>
           {candidate.profile_slug && (
             <Button variant="outline" size="lg" as="a" href={`/p/${candidate.profile_slug}`} fullWidth>
               View public profile
