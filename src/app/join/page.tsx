@@ -84,13 +84,13 @@ function JoinPageInner() {
   /* ── Step 3: verify OTP ───────────────────────────────────────────────── */
   const handleVerifyOtp = async () => {
     setError("");
-    if (otp.length < 6) { setError("Enter the 6-digit code we sent you."); return; }
+    if (otp.length < 6) { setError("Enter the verification code we sent you."); return; }
     setLoading(true);
     try {
       const res = await fetch("/api/auth/otp/verify", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim(), token: otp }),
+        body: JSON.stringify({ email: email.trim(), token: otp, track, name: name.trim() }),
       });
       if (!res.ok) throw new Error((await res.json()).error ?? "Invalid code");
       router.push("/dashboard");
@@ -244,8 +244,8 @@ function JoinPageInner() {
                   type="text"
                   inputMode="numeric"
                   pattern="[0-9]*"
-                  maxLength={6}
-                  placeholder="000000"
+                  maxLength={8}
+                  placeholder="00000000"
                   value={otp}
                   onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
                   onKeyDown={(e) => e.key === "Enter" && handleVerifyOtp()}

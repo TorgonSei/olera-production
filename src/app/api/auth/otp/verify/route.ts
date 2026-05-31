@@ -3,7 +3,7 @@ import { createClient, createServiceClient } from "@/lib/supabase/server";
 
 export async function POST(req: NextRequest) {
   try {
-    const { email, token } = await req.json();
+    const { email, token, track, name } = await req.json();
 
     if (!email || !token) {
       return NextResponse.json({ error: "Email and token required" }, { status: 400 });
@@ -32,15 +32,20 @@ export async function POST(req: NextRequest) {
       .single();
 
     if (!existing) {
-      await supabase.from("candidates").insert({
+      const { error: insertError } = await supabase.from("candidates").insert({
         user_id: user.id,
         email: user.email ?? email,
-        full_name: user.user_metadata?.full_name ?? "",
+        full_name: user.user_metadata?.full_name ?? name ?? "",
         phone: "",
-        status: "joined",
+        track: track ?? "support",
+        status: "registered",
         readiness: "unscreened",
         profile_completeness: 10,
       });
+      if (insertError) {
+        console.error("Candidate insert error:", insertError);
+        return NextResponse.json({ error: "Failed to create profile" }, { status: 500 });
+      }
     }
 
     return NextResponse.json({

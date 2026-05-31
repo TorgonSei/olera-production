@@ -36,7 +36,7 @@ function getNextAction(
   candidateId: string,
   profileSlug?: string | null,
 ): NextAction {
-  if (status === "joined" || !status) {
+  if (status === "registered" || !status) {
     return {
       icon: <Upload size={22} className="text-amber" />,
       heading: "Upload your CV",
