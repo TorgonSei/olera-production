@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/Button";
 import { Footer } from "@/components/layout/Footer";
 import { ArrowRight, CheckCircle, Circle, Upload, ClipboardList, Eye } from "lucide-react";
 import Link from "next/link";
+import { CandidateMenu } from "@/components/candidate/CandidateMenu";
 
 /* ─── Pathway steps ─────────────────────────────────────────────────────── */
 const PATHWAY = [
@@ -167,9 +168,11 @@ export default async function DashboardPage() {
       {/* Header */}
       <header className="px-6 py-4 flex items-center justify-between border-b border-mist/60 bg-cream/90 backdrop-blur-sm sticky top-0 z-10">
         <OleraLockupH size={26} />
-        <Link href={`/profile/${candidate.id}/review`} className="text-xs text-moss hover:text-char transition-colors font-mono">
-          My profile →
-        </Link>
+        <CandidateMenu
+          firstName={firstName}
+          candidateId={candidate.id}
+          profileSlug={candidate.profile_slug}
+        />
       </header>
 
       <div className="max-w-lg mx-auto px-4 py-10 sm:py-14">
