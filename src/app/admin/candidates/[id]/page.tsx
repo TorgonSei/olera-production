@@ -1,7 +1,7 @@
 import React from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
+import { createServiceClient } from "@/lib/supabase/server";
 import { OleraLockupH, OleraCompleteness, OleraFitCategory } from "@/components/brand/Mark";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
@@ -20,7 +20,7 @@ export default async function AdminCandidateDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const supabase = await createClient();
+  const supabase = createServiceClient();
 
   const [{ data: candidateRaw }, { data: assessmentRaw }] = await Promise.all([
     supabase.from("candidates").select("*").eq("id", id).single(),

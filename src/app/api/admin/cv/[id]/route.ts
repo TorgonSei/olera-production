@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createServiceClient } from "@/lib/supabase/server";
+import { createClient, createServiceClient } from "@/lib/supabase/server";
 
 export async function GET(
   _req: NextRequest,
@@ -7,14 +7,17 @@ export async function GET(
 ) {
   try {
     const { id } = await params;
-    const supabase = createServiceClient();
 
-    // Auth — admin only
-    const { data: { user } } = await supabase.auth.getUser();
+    // Use cookie-aware client to verify the admin session
+    const authClient = await createClient();
+    const { data: { user } } = await authClient.auth.getUser();
     if (!user) return NextResponse.json({ error: "Unauthorised" }, { status: 401 });
 
     const isAdmin = user.user_metadata?.role === "admin";
     if (!isAdmin) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+
+    // Use service client to read storage (bypasses RLS)
+    const supabase = createServiceClient();
 
     // Get candidate record
     const { data: candidate } = await supabase
