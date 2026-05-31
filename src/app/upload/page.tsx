@@ -46,7 +46,7 @@ export default function UploadPage() {
       });
       if (!res.ok) throw new Error((await res.json()).error ?? "Upload failed");
       const { candidateId } = await res.json();
-      router.push(`/profile/${candidateId}/gaps`);
+      router.push(`/profile/${candidateId}/intake`);
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Something went wrong");
     } finally {

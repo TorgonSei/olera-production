@@ -12,34 +12,55 @@ export type Json =
   | Json[];
 
 /* ─── Enums ─────────────────────────────────────────────────────────────── */
-export type TrackType = "support" | "success" | "assistant";
+export type TrackType = "support" | "success" | "assistant" | "operations";
 export type ReadinessLevel = "ready" | "remote_ready" | "near_ready" | "developing" | "unscreened";
 export type FitLevel = "strong" | "possible" | "stretch" | "poor";
+
+// Candidate lifecycle — first half is candidate-triggered, second is admin-controlled
 export type CandidateStatus =
-  | "registered"
-  | "cv_uploaded"
+  // Candidate-triggered
+  | "registered"       // signed up, magic link clicked
+  | "cv_uploaded"      // CV uploaded and parsed
+  | "submitted"        // completed intake form — enters admin queue
+  // Legacy (keep for backward compat)
   | "profile_parsed"
   | "gaps_filled"
+  // Admin-controlled
+  | "needs_review"
+  | "keep_in_pool"
+  | "screening_needed"
+  | "screening_scheduled"
+  | "screened"
+  | "assessed"
+  | "employer_ready"
+  | "shortlisted"
+  | "interview_requested"
+  | "placed"
+  | "rejected"
+  | "archived"
+  // Legacy admin statuses (keep for backward compat)
   | "assessment_invited"
   | "assessment_complete"
   | "interview_invited"
-  | "assessed"
   | "review_pending"
   | "active"
-  | "placed"
   | "withdrawn";
+
+export type EmployerRequestStatus =
+  | "new_request"
+  | "reviewing"
+  | "can_support"
+  | "cannot_support"
+  | "need_more_info"
+  | "shortlist_in_progress"
+  | "shortlist_sent"
+  | "interview_stage"
+  | "offer_stage"
+  | "hired"
+  | "closed";
+
 export type RoleStatus = "draft" | "live" | "paused" | "filled" | "cancelled";
-export type ApplicationStatus =
-  | "shortlisted"
-  | "presented"
-  | "interview_requested"
-  | "interviewing"
-  | "offered"
-  | "placed"
-  | "rejected"
-  | "withdrawn";
 export type EmployerTier = "starter" | "growth" | "scale";
-export type RemoteVerificationTier = "none" | "confirmed" | "verified";
 export type ContractType = "full_time" | "part_time" | "contract";
 export type EnglishLevel = "native" | "fluent" | "professional" | "conversational";
 export type EducationLevel = "high_school" | "diploma" | "bachelor" | "master" | "phd" | "other";
@@ -69,21 +90,66 @@ export interface CandidateRow {
   specialisations: string[];
   languages: string[];
   education_level: EducationLevel | null;
+  // Intake fields (from gaps form, now intake form)
+  role_interests: string[];
+  work_preferences: string[];
+  intake_note: string | null;
+  linkedin_url: string | null;
+  // Legacy gap fields (kept for existing records)
   gap_target_role: string | null;
   gap_english_level: EnglishLevel | null;
   gap_salary_min_usd: number | null;
   gap_salary_max_usd: number | null;
   gap_availability_weeks: number | null;
   gap_contract_pref: ContractType | null;
-  remote_verification: RemoteVerificationTier;
-  internet_speed_mbps: number | null;
-  setup_photo_path: string | null;
+  // Assessment (admin-triggered, internal)
   assessment_completed_at: string | null;
   assessment_score: number | null;
   assessment_tier: AssessmentTier | null;
+  // Profile
   profile_slug: string | null;
   profile_public: boolean;
   embedding: string | null;
+  // Deprecated
+  remote_verification?: string;
+  internet_speed_mbps?: number | null;
+  setup_photo_path?: string | null;
+}
+
+export interface EmployerRequestRow {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  company_name: string;
+  contact_name: string;
+  work_email: string;
+  company_website: string | null;
+  role_track: string;
+  role_title: string;
+  headcount: number;
+  work_arrangement: string[];
+  location_type: string[];
+  timezone: string | null;
+  start_date: string | null;
+  role_description: string;
+  daily_tasks: string | null;
+  required_tools: string[];
+  must_haves: string | null;
+  nice_to_haves: string | null;
+  salary_range: string | null;
+  deal_breakers: string | null;
+  status: EmployerRequestStatus;
+  admin_owner: string | null;
+  admin_notes: string | null;
+}
+
+export interface CandidateNoteRow {
+  id: string;
+  created_at: string;
+  candidate_id: string;
+  admin_email: string | null;
+  note: string;
+  note_type: string;
 }
 
 export interface EmployerRow {
@@ -104,48 +170,6 @@ export interface EmployerRow {
   verified: boolean;
   msa_accepted_at: string | null;
   msa_accepted_ip: string | null;
-}
-
-export interface RoleRow {
-  id: string;
-  created_at: string;
-  updated_at: string;
-  employer_id: string;
-  title: string;
-  track: TrackType;
-  status: RoleStatus;
-  description: string | null;
-  requirements: string[];
-  tools_required: string[];
-  salary_min_usd: number | null;
-  salary_max_usd: number | null;
-  contract_type: ContractType;
-  remote: boolean;
-  location_preference: string | null;
-  shortlist_limit: number;
-  placement_fee_usd: number | null;
-  embedding: string | null;
-}
-
-export interface ApplicationRow {
-  id: string;
-  created_at: string;
-  updated_at: string;
-  candidate_id: string;
-  role_id: string;
-  employer_id: string;
-  status: ApplicationStatus;
-  fit_level: FitLevel | null;
-  fit_score: number | null;
-  fit_reasons: string[];
-  shortlisted_at: string | null;
-  presented_at: string | null;
-  interview_requested_at: string | null;
-  offered_at: string | null;
-  placed_at: string | null;
-  placement_fee_usd: number | null;
-  payment_status: PaymentStatus | null;
-  payment_reference: string | null;
 }
 
 export interface AssessmentRow {
@@ -183,22 +207,22 @@ export interface Database {
         Update: Partial<CandidateRow>;
         Relationships: [];
       };
+      employer_requests: {
+        Row: EmployerRequestRow;
+        Insert: Partial<EmployerRequestRow> & Pick<EmployerRequestRow, "company_name" | "contact_name" | "work_email" | "role_track" | "role_title" | "role_description">;
+        Update: Partial<EmployerRequestRow>;
+        Relationships: [];
+      };
+      candidate_notes: {
+        Row: CandidateNoteRow;
+        Insert: Partial<CandidateNoteRow> & Pick<CandidateNoteRow, "candidate_id" | "note">;
+        Update: Partial<CandidateNoteRow>;
+        Relationships: [];
+      };
       employers: {
         Row: EmployerRow;
         Insert: Partial<EmployerRow> & Pick<EmployerRow, "user_id" | "company_name" | "hq_country" | "contact_name" | "contact_email">;
         Update: Partial<EmployerRow>;
-        Relationships: [];
-      };
-      roles: {
-        Row: RoleRow;
-        Insert: Partial<RoleRow> & Pick<RoleRow, "employer_id" | "title" | "track">;
-        Update: Partial<RoleRow>;
-        Relationships: [];
-      };
-      applications: {
-        Row: ApplicationRow;
-        Insert: Partial<ApplicationRow> & Pick<ApplicationRow, "candidate_id" | "role_id" | "employer_id">;
-        Update: Partial<ApplicationRow>;
         Relationships: [];
       };
       assessments: {
@@ -209,38 +233,12 @@ export interface Database {
       };
     };
     Views: Record<string, never>;
-    Functions: {
-      match_candidates: {
-        Args: {
-          query_embedding: string;
-          match_threshold: number;
-          match_count: number;
-          filter_track?: TrackType;
-        };
-        Returns: Array<{
-          id: string;
-          full_name: string;
-          track: TrackType;
-          readiness: ReadinessLevel;
-          fit_score: number;
-          years_experience: number;
-          tools: string[];
-        }>;
-      };
-      is_admin: {
-        Args: Record<string, never>;
-        Returns: boolean;
-      };
-    };
+    Functions: Record<string, never>;
     Enums: {
       track_type: TrackType;
       readiness_level: ReadinessLevel;
-      fit_level: FitLevel;
       candidate_status: CandidateStatus;
-      role_status: RoleStatus;
-      application_status: ApplicationStatus;
-      employer_tier: EmployerTier;
-      assessment_tier: AssessmentTier;
+      employer_request_status: EmployerRequestStatus;
     };
     CompositeTypes: Record<string, never>;
   };

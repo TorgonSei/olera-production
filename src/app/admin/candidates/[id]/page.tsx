@@ -12,6 +12,7 @@ import {
   CheckCircle, XCircle, Clock, Phone, Mail,
 } from "lucide-react";
 import { AdminActionButtons } from "./AdminActionButtons";
+import { AdminNotes } from "./AdminNotes";
 
 /* ─── Page ──────────────────────────────────────────────────────────────── */
 export default async function AdminCandidateDetailPage({
@@ -277,6 +278,11 @@ export default async function AdminCandidateDetailPage({
                 </a>
               </Card>
             )}
+
+            {/* Admin notes */}
+            <Card variant="elevated">
+              <AdminNotes candidateId={c.id} />
+            </Card>
 
             {/* Public profile link */}
             {c.profile_slug && (

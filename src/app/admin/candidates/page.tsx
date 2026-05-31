@@ -3,39 +3,36 @@ import Link from "next/link";
 import { createServiceClient } from "@/lib/supabase/server";
 import { OleraLockupH } from "@/components/brand/Mark";
 import type { CandidateRow } from "@/lib/supabase/types";
-import { Users, CheckCircle, Clock, Zap, Star } from "lucide-react";
+import { Users, Clock, Star, CheckCircle } from "lucide-react";
 import { CandidateListRow } from "./CandidateListRow";
 
 /* ─── Pipeline stages ───────────────────────────────────────────────────── */
-type Stage = "new" | "assessment" | "interview" | "assessed" | "active" | "discarded";
+type Stage = "new" | "screening" | "assessed" | "active" | "placed" | "rejected";
 
 const STAGES: { key: Stage; label: string }[] = [
-  { key: "new",        label: "New" },
-  { key: "assessment", label: "Assessment" },
-  { key: "interview",  label: "Interview" },
-  { key: "assessed",   label: "Assessed" },
-  { key: "active",     label: "Active" },
-  { key: "discarded",  label: "Discarded" },
+  { key: "new",       label: "New" },
+  { key: "screening", label: "Screening" },
+  { key: "assessed",  label: "Assessed" },
+  { key: "active",    label: "Active" },
+  { key: "placed",    label: "Placed" },
+  { key: "rejected",  label: "Rejected" },
 ];
 
 function getStage(c: CandidateRow): Stage {
-  if (c.status === "withdrawn")                                  return "discarded";
-  if (c.readiness === "ready" || c.readiness === "remote_ready") return "active";
-  if (c.status === "assessed")                                   return "assessed";
-  if (c.status === "interview_invited")                          return "interview";
-  if (c.status === "assessment_invited" ||
-      c.status === "assessment_complete")                        return "assessment";
+  const s = c.status;
+  if (s === "placed")                                               return "placed";
+  if (s === "rejected" || s === "archived" || s === "withdrawn")   return "rejected";
+  if (s === "employer_ready" || s === "shortlisted" ||
+      s === "interview_requested" || s === "active")               return "active";
+  if (s === "assessed")                                             return "assessed";
+  if (s === "screening_needed" || s === "screening_scheduled" ||
+      s === "screened" || s === "keep_in_pool")                    return "screening";
   return "new";
 }
 
 /* ─── Stat card ─────────────────────────────────────────────────────────── */
-function StatCard({
-  icon, value, label, urgent,
-}: {
-  icon: React.ReactNode;
-  value: number;
-  label: string;
-  urgent?: boolean;
+function StatCard({ icon, value, label, urgent }: {
+  icon: React.ReactNode; value: number; label: string; urgent?: boolean;
 }) {
   return (
     <div className={`rounded-2xl p-5 border ${urgent && value > 0
@@ -57,13 +54,12 @@ function StatCard({
 export default async function AdminCandidatesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ stage?: string }>;
+  searchParams: Promise<{ stage?: string; track?: string }>;
 }) {
-  const { stage } = await searchParams;
+  const { stage, track } = await searchParams;
   const activeStage = (stage ?? "new") as Stage;
 
   const supabase = createServiceClient();
-
   const { data: candidates } = await supabase
     .from("candidates")
     .select("*")
@@ -74,24 +70,30 @@ export default async function AdminCandidatesPage({
 
   const byStageFn = (s: Stage) => all.filter((c) => getStage(c) === s);
   const counts: Record<Stage, number> = {
-    new:        byStageFn("new").length,
-    assessment: byStageFn("assessment").length,
-    interview:  byStageFn("interview").length,
-    assessed:   byStageFn("assessed").length,
-    active:     byStageFn("active").length,
-    discarded:  byStageFn("discarded").length,
+    new:       byStageFn("new").length,
+    screening: byStageFn("screening").length,
+    assessed:  byStageFn("assessed").length,
+    active:    byStageFn("active").length,
+    placed:    byStageFn("placed").length,
+    rejected:  byStageFn("rejected").length,
   };
 
-  const rows = byStageFn(activeStage);
+  let rows = byStageFn(activeStage);
+  if (track) rows = rows.filter((c) => c.track === track);
 
-  // "Action needed" = profile submitted but not yet invited, or assessment done but not interview invited
-  const needsInvite     = all.filter((c) => c.status === "gaps_filled").length;
-  const needsInterview  = all.filter((c) => c.status === "assessment_complete").length;
-  const needsDecision   = all.filter((c) => c.status === "assessed").length;
+  const needsReview    = all.filter((c) => c.status === "submitted" || c.status === "gaps_filled" || c.status === "needs_review").length;
+  const needsScreening = all.filter((c) => c.status === "screening_needed").length;
+  const readyToActive  = all.filter((c) => c.status === "assessed").length;
+  const newToday       = all.filter((c) => {
+    const d = new Date(c.created_at);
+    const now = new Date();
+    return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth() && d.getDate() === now.getDate();
+  }).length;
+
+  const TRACKS = ["support", "success", "assistant", "operations"];
 
   return (
     <div className="min-h-screen bg-cream">
-      {/* Admin nav */}
       <header className="sticky top-0 z-10 bg-forest border-b border-white/10 px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-6">
           <OleraLockupH size={24} reversed />
@@ -106,43 +108,23 @@ export default async function AdminCandidatesPage({
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
         <div className="mb-6">
           <h1 className="font-display font-bold text-2xl text-char">Candidate pipeline</h1>
-          <p className="text-moss text-sm mt-1">Triage, invite, and activate candidates through each stage.</p>
+          <p className="text-moss text-sm mt-1">Review, screen, and manage candidates through each stage.</p>
         </div>
 
-        {/* Action-needed stats */}
+        {/* Stat cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <StatCard
-            icon={<Users size={16} />}
-            value={counts.new}
-            label="Awaiting review"
-            urgent
-          />
-          <StatCard
-            icon={<Zap size={16} />}
-            value={needsInvite}
-            label="Invite to assessment"
-            urgent
-          />
-          <StatCard
-            icon={<Clock size={16} />}
-            value={needsInterview}
-            label="Invite to interview"
-            urgent
-          />
-          <StatCard
-            icon={<Star size={16} />}
-            value={needsDecision}
-            label="Needs activation decision"
-            urgent
-          />
+          <StatCard icon={<Users size={16} />}     value={needsReview}    label="Needs review"    urgent />
+          <StatCard icon={<Clock size={16} />}     value={needsScreening} label="Screening needed" urgent />
+          <StatCard icon={<Star size={16} />}      value={readyToActive}  label="Assessed"        urgent />
+          <StatCard icon={<CheckCircle size={16} />} value={newToday}     label="Submitted today"  />
         </div>
 
-        {/* Pipeline stage tabs */}
-        <div className="flex items-center gap-1.5 mb-4 flex-wrap">
+        {/* Stage tabs */}
+        <div className="flex items-center gap-1.5 mb-3 flex-wrap">
           {STAGES.map(({ key, label }) => (
             <Link
               key={key}
-              href={`/admin/candidates?stage=${key}`}
+              href={`/admin/candidates?stage=${key}${track ? `&track=${track}` : ""}`}
               className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-1.5 ${
                 activeStage === key
                   ? "bg-forest text-cream"
@@ -151,12 +133,30 @@ export default async function AdminCandidatesPage({
             >
               {label}
               <span className={`text-xs px-1.5 py-0.5 rounded-full font-mono ${
-                activeStage === key
-                  ? "bg-white/15 text-cream"
-                  : "bg-mist text-moss"
+                activeStage === key ? "bg-white/15 text-cream" : "bg-mist text-moss"
               }`}>
                 {counts[key]}
               </span>
+            </Link>
+          ))}
+        </div>
+
+        {/* Track filter */}
+        <div className="flex items-center gap-1.5 mb-4">
+          <span className="text-xs text-moss/50 font-mono mr-1">Track:</span>
+          <Link
+            href={`/admin/candidates?stage=${activeStage}`}
+            className={`text-xs px-2.5 py-1 rounded-full font-mono transition-colors ${!track ? "bg-forest text-cream" : "bg-mist text-moss hover:bg-mist/70"}`}
+          >
+            All
+          </Link>
+          {TRACKS.map((t) => (
+            <Link
+              key={t}
+              href={`/admin/candidates?stage=${activeStage}&track=${t}`}
+              className={`text-xs px-2.5 py-1 rounded-full font-mono capitalize transition-colors ${track === t ? "bg-forest text-cream" : "bg-mist text-moss hover:bg-mist/70"}`}
+            >
+              {t}
             </Link>
           ))}
         </div>
@@ -168,7 +168,7 @@ export default async function AdminCandidatesPage({
               {rows.length} candidate{rows.length !== 1 ? "s" : ""}
             </span>
             <span className="text-xs text-moss/40 ml-auto hidden sm:block">
-              Click name to open · quick actions inline
+              Click name to open · manage status inside
             </span>
           </div>
 

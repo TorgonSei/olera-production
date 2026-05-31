@@ -3,7 +3,22 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
-import { CheckCircle, XCircle, Clock, Send, Star } from "lucide-react";
+import { ChevronDown } from "lucide-react";
+
+const ADMIN_STATUSES: { value: string; label: string; group: string }[] = [
+  { value: "needs_review",        label: "Needs review",         group: "Intake" },
+  { value: "keep_in_pool",        label: "Keep in pool",         group: "Intake" },
+  { value: "rejected",            label: "Rejected",             group: "Intake" },
+  { value: "screening_needed",    label: "Screening needed",     group: "Screening" },
+  { value: "screening_scheduled", label: "Screening scheduled",  group: "Screening" },
+  { value: "screened",            label: "Screened",             group: "Screening" },
+  { value: "assessed",            label: "Assessed",             group: "Advanced" },
+  { value: "employer_ready",      label: "Employer ready",       group: "Advanced" },
+  { value: "shortlisted",         label: "Shortlisted",          group: "Advanced" },
+  { value: "interview_requested", label: "Interview requested",  group: "Advanced" },
+  { value: "placed",              label: "Placed",               group: "Advanced" },
+  { value: "archived",            label: "Archived",             group: "Advanced" },
+];
 
 interface Props {
   candidateId: string;
@@ -11,224 +26,64 @@ interface Props {
   currentReadiness: string;
 }
 
-export function AdminActionButtons({ candidateId, currentStatus, currentReadiness }: Props) {
-  const router = useRouter();
-  const [loading, setLoading] = useState<string | null>(null);
-  const [showAssessForm, setShowAssessForm] = useState(false);
-  const [assessScore, setAssessScore] = useState("");
-  const [assessTier, setAssessTier] = useState<"pass" | "borderline" | "fail">("borderline");
+export function AdminActionButtons({ candidateId, currentStatus }: Props) {
+  const router  = useRouter();
+  const [status, setStatus]   = useState(currentStatus);
+  const [saving, setSaving]   = useState(false);
+  const [changed, setChanged] = useState(false);
 
-  const call = async (key: string, endpoint: string, method: string, body?: object) => {
-    setLoading(key);
+  const handleChange = (val: string) => {
+    setStatus(val);
+    setChanged(val !== currentStatus);
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
     try {
-      const res = await fetch(`/api/admin/candidates/${candidateId}/${endpoint}`, {
-        method,
+      const res = await fetch(`/api/admin/candidates/${candidateId}/status`, {
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: body ? JSON.stringify(body) : undefined,
+        body: JSON.stringify({ status }),
       });
-      if (!res.ok) throw new Error((await res.json()).error ?? "Request failed");
+      if (!res.ok) throw new Error("Failed");
+      setChanged(false);
       router.refresh();
     } catch (e) {
       console.error(e);
     } finally {
-      setLoading(null);
+      setSaving(false);
     }
   };
 
-  // ── Active in pool ──────────────────────────────────────────────────────
-  if (currentReadiness === "ready" || currentReadiness === "remote_ready") {
-    return (
-      <div className="flex items-center gap-2">
-        <span className="text-sm text-sage font-medium flex items-center gap-1.5">
-          <CheckCircle size={14} />
-          Active in pool
-        </span>
-        <Button
-          variant="ghost"
-          size="sm"
-          loading={loading === "deactivate"}
-          onClick={() => call("deactivate", "readiness", "PATCH", { readiness: "developing", status: "review_pending" })}
-        >
-          Deactivate
-        </Button>
-      </div>
-    );
-  }
-
-  // ── Assessment invited — awaiting candidate ─────────────────────────────
-  if (currentStatus === "assessment_invited") {
-    return (
-      <div className="flex items-center gap-2">
-        <span className="text-sm text-amber font-medium flex items-center gap-1.5">
-          <Clock size={14} />
-          Assessment invited
-        </span>
-        <Button
-          variant="ghost"
-          size="sm"
-          loading={loading === "discard"}
-          onClick={() => call("discard", "discard", "POST")}
-        >
-          <XCircle size={14} className="text-terra" />
-          Discard
-        </Button>
-      </div>
-    );
-  }
-
-  // ── Assessment complete — invite to interview ────────────────────────────
-  if (currentStatus === "assessment_complete") {
-    return (
-      <div className="flex items-center gap-2">
-        <Button
-          variant="primary"
-          size="sm"
-          loading={loading === "invite-interview"}
-          onClick={() => call("invite-interview", "invite-interview", "POST")}
-        >
-          <Send size={14} />
-          Invite to interview
-        </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          loading={loading === "discard"}
-          onClick={() => call("discard", "discard", "POST")}
-        >
-          <XCircle size={14} className="text-terra" />
-          Discard
-        </Button>
-      </div>
-    );
-  }
-
-  // ── Interview invited — mark as assessed ────────────────────────────────
-  if (currentStatus === "interview_invited") {
-    if (showAssessForm) {
-      return (
-        <div className="flex flex-col gap-3">
-          <div className="flex items-center gap-2">
-            <input
-              type="number"
-              min={0}
-              max={100}
-              placeholder="Score 0–100"
-              value={assessScore}
-              onChange={(e) => setAssessScore(e.target.value)}
-              className="border border-mist rounded-xl px-3 py-1.5 text-sm w-28 focus:outline-none focus:ring-2 focus:ring-amber/40 bg-white"
-            />
-            <select
-              value={assessTier}
-              onChange={(e) => setAssessTier(e.target.value as "pass" | "borderline" | "fail")}
-              className="border border-mist rounded-xl px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber/40 bg-white"
-            >
-              <option value="pass">Pass</option>
-              <option value="borderline">Borderline</option>
-              <option value="fail">Fail</option>
-            </select>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="primary"
-              size="sm"
-              loading={loading === "assess"}
-              onClick={() => call("assess", "assess", "PATCH", {
-                assessment_score: Number(assessScore),
-                assessment_tier: assessTier,
-              })}
-            >
-              <Star size={14} />
-              Confirm
-            </Button>
-            <Button variant="ghost" size="sm" onClick={() => setShowAssessForm(false)}>
-              Cancel
-            </Button>
-          </div>
-        </div>
-      );
-    }
-    return (
-      <div className="flex items-center gap-2">
-        <span className="text-sm text-amber font-medium flex items-center gap-1.5">
-          <Clock size={14} />
-          Interview sent
-        </span>
-        <Button
-          variant="primary"
-          size="sm"
-          onClick={() => setShowAssessForm(true)}
-        >
-          <Star size={14} />
-          Mark as assessed
-        </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          loading={loading === "discard"}
-          onClick={() => call("discard", "discard", "POST")}
-        >
-          <XCircle size={14} className="text-terra" />
-          Discard
-        </Button>
-      </div>
-    );
-  }
-
-  // ── Assessed — activate or adjust ──────────────────────────────────────
-  if (currentStatus === "assessed") {
-    return (
-      <div className="flex items-center gap-2 flex-wrap">
-        <Button
-          variant="primary"
-          size="sm"
-          loading={loading === "activate"}
-          onClick={() => call("activate", "readiness", "PATCH", { readiness: "ready", status: "active" })}
-        >
-          <CheckCircle size={14} />
-          Activate
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          loading={loading === "near_ready"}
-          onClick={() => call("near_ready", "readiness", "PATCH", { readiness: "near_ready" })}
-        >
-          Near ready
-        </Button>
-        <Button
-          variant="ghost"
-          size="sm"
-          loading={loading === "discard"}
-          onClick={() => call("discard", "discard", "POST")}
-        >
-          <XCircle size={14} className="text-terra" />
-          Discard
-        </Button>
-      </div>
-    );
-  }
-
-  // ── Default: profile submitted, waiting for admin review ───────────────
   return (
-    <div className="flex items-center gap-2">
-      <Button
-        variant="primary"
-        size="sm"
-        loading={loading === "invite-assessment"}
-        onClick={() => call("invite-assessment", "invite-assessment", "POST")}
-      >
-        <Send size={14} />
-        Invite to assessment
-      </Button>
-      <Button
-        variant="ghost"
-        size="sm"
-        loading={loading === "discard"}
-        onClick={() => call("discard", "discard", "POST")}
-      >
-        <XCircle size={14} className="text-terra" />
-        Discard
-      </Button>
+    <div className="flex items-center gap-2 flex-wrap">
+      <div className="relative">
+        <select
+          value={status}
+          onChange={(e) => handleChange(e.target.value)}
+          className="appearance-none pl-3 pr-8 py-1.5 rounded-xl border border-mist bg-white text-sm text-char focus:outline-none focus:ring-2 focus:ring-amber/40 focus:border-amber/60 cursor-pointer"
+        >
+          {/* Current status if not in list */}
+          {!ADMIN_STATUSES.find((s) => s.value === currentStatus) && (
+            <option value={currentStatus}>{currentStatus.replace(/_/g, " ")}</option>
+          )}
+          {/* Grouped options */}
+          {["Intake", "Screening", "Advanced"].map((group) => (
+            <optgroup key={group} label={group}>
+              {ADMIN_STATUSES.filter((s) => s.group === group).map((s) => (
+                <option key={s.value} value={s.value}>{s.label}</option>
+              ))}
+            </optgroup>
+          ))}
+        </select>
+        <ChevronDown size={13} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-moss pointer-events-none" />
+      </div>
+
+      {changed && (
+        <Button variant="primary" size="sm" loading={saving} onClick={handleSave}>
+          Save
+        </Button>
+      )}
     </div>
   );
 }

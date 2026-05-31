@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
   const service = createServiceClient();
   const { data: existing } = await service
     .from("candidates")
-    .select("id")
+    .select("id, status")
     .eq("user_id", user.id)
     .single();
 
@@ -35,7 +35,7 @@ export async function GET(req: NextRequest) {
       email: user.email ?? "",
       full_name: user.user_metadata?.full_name ?? name,
       phone: "",
-      track: track as "support" | "success" | "assistant",
+      track: "support",
       status: "registered",
       readiness: "unscreened",
       profile_completeness: 10,
@@ -43,9 +43,15 @@ export async function GET(req: NextRequest) {
 
     if (insertError) {
       console.error("Candidate insert error:", insertError);
-      // Still redirect — user is authenticated even if record creation failed
     }
+    return NextResponse.redirect(`${origin}/upload`);
   }
 
+  // Returning user: if they haven't submitted yet, send them to the right step
+  const status = existing.status;
+  if (status === "registered") return NextResponse.redirect(`${origin}/upload`);
+  if (status === "cv_uploaded" || status === "profile_parsed") {
+    return NextResponse.redirect(`${origin}/profile/${existing.id}/intake`);
+  }
   return NextResponse.redirect(`${origin}/dashboard`);
 }

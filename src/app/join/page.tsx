@@ -1,37 +1,10 @@
 "use client";
 
 import React, { useState, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
-import { OleraLockupH, COLORS } from "@/components/brand/Mark";
+import { OleraLockupH } from "@/components/brand/Mark";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
-import { cn } from "@/lib/cn";
 import { ArrowRight, Mail, CheckCircle } from "lucide-react";
-
-/* ─── Track config ──────────────────────────────────────────────────────── */
-const TRACKS = [
-  {
-    id: "support" as const,
-    label: "Customer Support",
-    icon: "🎧",
-    description: "Support specialist, tech support, chat lead",
-  },
-  {
-    id: "success" as const,
-    label: "Customer Success",
-    icon: "📈",
-    description: "CSM, onboarding, renewals, account management",
-  },
-  {
-    id: "assistant" as const,
-    label: "Virtual / Executive Assistant",
-    icon: "⚡",
-    description: "EA, ops coordinator, project VA",
-  },
-];
-
-type Track = (typeof TRACKS)[number]["id"];
-type Step = "track" | "details" | "sent";
 
 export default function JoinPage() {
   return (
@@ -42,46 +15,31 @@ export default function JoinPage() {
 }
 
 function JoinPageInner() {
-  const searchParams = useSearchParams();
-  const initialTrack = (searchParams.get("track") as Track) ?? null;
-
-  const [step, setStep]   = useState<Step>(initialTrack ? "details" : "track");
-  const [track, setTrack] = useState<Track | null>(initialTrack);
   const [name, setName]   = useState("");
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState("");
+  const [sent, setSent]       = useState(false);
 
-  /* ── Step 1: select track ─────────────────────────────────────────────── */
-  const handleTrackSelect = (t: Track) => {
-    setTrack(t);
-    setStep("details");
-  };
-
-  /* ── Step 2: send magic link ──────────────────────────────────────────── */
-  const handleSendLink = async () => {
+  const handleSend = async () => {
     setError("");
-    if (!name.trim()) { setError("Please enter your name."); return; }
+    if (!name.trim())  { setError("Please enter your name."); return; }
     if (!email.trim() || !email.includes("@")) { setError("Please enter a valid email address."); return; }
     setLoading(true);
     try {
       const res = await fetch("/api/auth/otp/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim(), name: name.trim(), track }),
+        body: JSON.stringify({ email: email.trim(), name: name.trim() }),
       });
       if (!res.ok) throw new Error((await res.json()).error ?? "Failed to send link");
-      setStep("sent");
+      setSent(true);
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Something went wrong");
     } finally {
       setLoading(false);
     }
   };
-
-  /* ── Progress ─────────────────────────────────────────────────────────── */
-  const STEP_ORDER: Step[] = ["track", "details", "sent"];
-  const stepIndex = STEP_ORDER.indexOf(step);
 
   return (
     <div className="min-h-screen bg-cream flex flex-col">
@@ -91,76 +49,36 @@ function JoinPageInner() {
       </header>
 
       <div className="flex-1 flex flex-col items-center justify-center px-4 py-12 pb-20 sm:pb-12">
-        {/* Progress dots */}
-        <div className="flex items-center gap-2 mb-8" aria-label="Onboarding progress">
-          {STEP_ORDER.map((s, i) => (
-            <div
-              key={s}
-              className={cn(
-                "rounded-full transition-all duration-300",
-                i === stepIndex ? "w-8 h-2.5 bg-amber"
-                  : i < stepIndex ? "w-2.5 h-2.5 bg-sage"
-                  : "w-2.5 h-2.5 bg-mist"
-              )}
-              aria-current={i === stepIndex ? "step" : undefined}
-            />
-          ))}
-        </div>
-
         <div className="w-full max-w-md">
-          {/* ── STEP: Track ─────────────────────────────────────────────── */}
-          {step === "track" && (
-            <div>
-              <div className="mb-8">
-                <h1 className="font-display font-bold text-3xl text-char mb-2">
-                  What&apos;s your area?
-                </h1>
-                <p className="text-moss">
-                  Choose the track that best matches your experience.
-                </p>
+          {sent ? (
+            <div className="text-center">
+              <div className="w-14 h-14 rounded-full bg-sage/10 flex items-center justify-center mb-6 mx-auto">
+                <CheckCircle size={28} className="text-sage" />
               </div>
-              <div className="space-y-3">
-                {TRACKS.map((t) => (
-                  <button
-                    key={t.id}
-                    onClick={() => handleTrackSelect(t.id)}
-                    className={cn(
-                      "w-full text-left p-4 rounded-2xl border-2 transition-all duration-150",
-                      "hover:border-amber hover:bg-amber/5",
-                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber/40",
-                      "group"
-                    )}
-                    style={{
-                      borderColor: track === t.id ? COLORS.amber : COLORS.mist,
-                      backgroundColor: track === t.id ? "#fef5ec" : "white",
-                    }}
-                  >
-                    <div className="flex items-center gap-3">
-                      <span className="text-2xl">{t.icon}</span>
-                      <div className="flex-1">
-                        <div className="font-semibold text-char">{t.label}</div>
-                        <div className="text-xs text-moss mt-0.5">{t.description}</div>
-                      </div>
-                      <ArrowRight size={16} className="text-mist group-hover:text-amber transition-colors" />
-                    </div>
-                  </button>
-                ))}
-              </div>
+              <h1 className="font-display font-bold text-3xl text-char mb-3">Check your inbox</h1>
+              <p className="text-moss mb-2">We sent a sign-in link to</p>
+              <p className="font-semibold text-char mb-6">{email}</p>
+              <p className="text-sm text-moss/70 mb-8">
+                Click the link to continue uploading your CV. It expires in 1 hour.
+              </p>
+              <button
+                className="text-sm text-amber hover:text-terra transition-colors font-medium"
+                onClick={() => { setSent(false); setError(""); }}
+              >
+                Wrong email? Go back
+              </button>
             </div>
-          )}
-
-          {/* ── STEP: Details ────────────────────────────────────────────── */}
-          {step === "details" && (
+          ) : (
             <div>
               <div className="mb-8">
                 <div className="w-12 h-12 rounded-full bg-amber/10 flex items-center justify-center mb-4">
                   <Mail size={20} className="text-amber" />
                 </div>
                 <h1 className="font-display font-bold text-3xl text-char mb-2">
-                  Let&apos;s get you in
+                  Submit your CV
                 </h1>
                 <p className="text-moss">
-                  We&apos;ll email you a sign-in link. No password needed.
+                  Create your profile and upload your CV. We&apos;ll review it and be in touch.
                 </p>
               </div>
 
@@ -171,7 +89,7 @@ function JoinPageInner() {
                   placeholder="Ada Okonkwo"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && handleSendLink()}
+                  onKeyDown={(e) => e.key === "Enter" && handleSend()}
                   required
                   autoFocus
                 />
@@ -181,48 +99,19 @@ function JoinPageInner() {
                   placeholder="ada@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && handleSendLink()}
+                  onKeyDown={(e) => e.key === "Enter" && handleSend()}
                   error={error}
                   required
                 />
-                <Button variant="primary" size="lg" fullWidth loading={loading} onClick={handleSendLink}>
-                  Send sign-in link
+                <Button variant="primary" size="lg" fullWidth loading={loading} onClick={handleSend}>
+                  Continue
                   {!loading && <ArrowRight size={16} />}
                 </Button>
-                {track && (
-                  <button
-                    className="text-sm text-moss hover:text-char transition-colors w-full text-center"
-                    onClick={() => { setStep("track"); setError(""); }}
-                  >
-                    ← Back
-                  </button>
-                )}
               </div>
-            </div>
-          )}
 
-          {/* ── STEP: Sent ──────────────────────────────────────────────── */}
-          {step === "sent" && (
-            <div className="text-center">
-              <div className="w-14 h-14 rounded-full bg-sage/10 flex items-center justify-center mb-6 mx-auto">
-                <CheckCircle size={28} className="text-sage" />
-              </div>
-              <h1 className="font-display font-bold text-3xl text-char mb-3">
-                Check your inbox
-              </h1>
-              <p className="text-moss mb-2">
-                We sent a sign-in link to
+              <p className="text-xs text-center text-moss/60 mt-5">
+                No password needed. We&apos;ll email you a secure sign-in link.
               </p>
-              <p className="font-semibold text-char mb-6">{email}</p>
-              <p className="text-sm text-moss/70 mb-8">
-                Click the link in the email to continue. It expires in 1 hour.
-              </p>
-              <button
-                className="text-sm text-amber hover:text-terra transition-colors font-medium"
-                onClick={() => { setStep("details"); setError(""); }}
-              >
-                Wrong email? Go back
-              </button>
             </div>
           )}
         </div>
