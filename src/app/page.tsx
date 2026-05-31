@@ -22,7 +22,7 @@ import {
 const CANDIDATE_FAQ = [
   {
     q: "Do I need experience?",
-    a: "Depends on the role. The practical tasks show what you can do — not just what your CV says.",
+    a: "Depends on the role. The practical tasks show what you can do, not just what your CV says.",
   },
   {
     q: "Is it free?",
@@ -38,7 +38,7 @@ const CANDIDATE_FAQ = [
   },
   {
     q: "What if I am not ready yet?",
-    a: "You get a profile and clear feedback on what to improve. Not everyone reaches Employer Ready first time — that's expected.",
+    a: "You get a profile and clear feedback on what to improve. Not everyone is ready first time. That's expected.",
   },
 ];
 
@@ -156,8 +156,6 @@ export default function HomePage() {
                   </Button>
                 </div>
 
-                {/* Trust line */}
-                <p className="mt-5 text-xs text-moss/50 font-mono">Free for candidates.</p>
               </div>
 
               {/* Right — stats 2×2 */}
@@ -451,7 +449,7 @@ export default function HomePage() {
                 {[
                   {
                     title: "Assessed before interview",
-                    body: "Scenarios, tool checks, and a profile review — before they're presented.",
+                    body: "Scenarios, tool checks, and a profile review before they are presented.",
                   },
                   {
                     title: "Small shortlists",
@@ -459,7 +457,7 @@ export default function HomePage() {
                   },
                   {
                     title: "Remote-readiness checked",
-                    body: "Availability, work setup, comms quality, and remote preference — verified before matching.",
+                    body: "Availability, work setup, comms quality, and remote preference verified before matching.",
                   },
                   {
                     title: "One flat fee on hire",
@@ -494,7 +492,7 @@ export default function HomePage() {
                   Start with your CV.
                 </h2>
                 <Button size="lg" variant="primary" as="a" href="/join" fullWidth>
-                  Upload your CV — it&apos;s free
+                  Upload your CV
                   <ArrowRight size={18} />
                 </Button>
               </div>

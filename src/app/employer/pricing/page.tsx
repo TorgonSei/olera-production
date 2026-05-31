@@ -103,8 +103,8 @@ export default function PricingPage() {
               </h1>
               <p className="text-xl text-cream/70 leading-relaxed mb-6 max-w-2xl">
                 Review the shortlist free. Interview candidates free. Pay only
-                when you decide to hire. The fee is based on the role level —
-                no retainers, no percentage of salary.
+                when you decide to hire. The fee is based on the role level.
+                No retainers, no percentage of salary.
               </p>
               <div className="flex flex-wrap gap-6 text-sm font-mono text-cream/40">
                 <span>Review free</span>

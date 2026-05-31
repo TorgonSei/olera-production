@@ -33,7 +33,7 @@ const WHY_KENYA = [
   },
   {
     label: "Service-sector training ground",
-    body: "Many strong candidates come from banks, telcos, hospitality, logistics, startups, NGOs, and BPO firms — environments where communication, patience, follow-through, and customer handling are daily requirements.",
+    body: "Many strong candidates come from banks, telcos, hospitality, logistics, startups, NGOs, and BPO firms: environments where communication, patience, follow-through, and customer handling are daily requirements.",
   },
   {
     label: "Quality still needs proof",
@@ -455,7 +455,7 @@ export default function EmployerPage() {
                 Describe the work clearly. We will review it and tell you within
                 24 hours whether Olera has the right candidate pool for it. If
                 we can help, we will build a small shortlist and explain what
-                each candidate fits — and what to check before you interview.
+                each candidate fits, and what to check before you interview.
               </p>
             </div>
 

@@ -301,7 +301,7 @@ export default async function PublicProfilePage({
           </h2>
           <p className="text-cream/70 mb-6 max-w-sm mx-auto">
             Post your role on Olera and we'll match you with qualified candidates like{" "}
-            {c.full_name?.split(" ")[0] ?? "them"} — shortlisted within 48 hours.
+            {c.full_name?.split(" ")[0] ?? "them"}, shortlisted within 48 hours.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Button variant="primary" size="lg" as="a" href="/employer">

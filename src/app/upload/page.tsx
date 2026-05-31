@@ -88,7 +88,7 @@ export default function UploadPage() {
               onClick={() => document.getElementById("cv-input")?.click()}
               role="button"
               tabIndex={0}
-              aria-label="Upload CV — click or drag a PDF"
+              aria-label="Upload CV, click or drag a PDF"
               onKeyDown={(e) => e.key === "Enter" && document.getElementById("cv-input")?.click()}
             >
               <input
@@ -119,7 +119,7 @@ export default function UploadPage() {
                   </div>
                   <div>
                     <p className="font-medium text-char">Drop your CV here</p>
-                    <p className="text-sm text-moss mt-1">or click to browse — PDF only, max 10MB</p>
+                    <p className="text-sm text-moss mt-1">or click to browse · PDF only, max 10MB</p>
                   </div>
                 </div>
               )}

@@ -125,7 +125,7 @@ export default function GapsPage() {
             A few quick details
           </h1>
           <p className="text-moss">
-            We extracted what we could from your CV. Fill in what&apos;s missing — takes 2 minutes.
+            We extracted what we could from your CV. Fill in what&apos;s missing. Takes 2 minutes.
           </p>
         </div>
 
@@ -148,7 +148,7 @@ export default function GapsPage() {
               placeholder="e.g. Senior Customer Success Manager"
               value={form.target_role}
               onChange={(e) => set("target_role", e.target.value)}
-              hint="Optional — helps us match you more precisely"
+              hint="Optional. Helps us match you more precisely."
             />
           </section>
 
