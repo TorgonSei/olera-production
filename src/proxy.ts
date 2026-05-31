@@ -50,8 +50,8 @@ export async function proxy(request: NextRequest) {
     }
 
     // Protected admin routes
-    if (pathname.startsWith("/admin")) {
-      if (!user) {
+    if (pathname.startsWith("/admin") && !pathname.startsWith("/admin/login")) {
+      if (!user || user.user_metadata?.role !== "admin") {
         const url = request.nextUrl.clone();
         url.pathname = "/admin/login";
         return NextResponse.redirect(url);
