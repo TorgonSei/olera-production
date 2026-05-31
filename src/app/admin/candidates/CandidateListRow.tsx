@@ -3,10 +3,15 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Badge } from "@/components/ui/Badge";
 import type { CandidateRow, TrackType } from "@/lib/supabase/types";
-import { CheckCircle, XCircle, ChevronRight, Wrench } from "lucide-react";
+import { XCircle, ChevronRight, Send, Star, Wrench, MapPin, Briefcase } from "lucide-react";
 import { cn } from "@/lib/cn";
+
+const TRACK_COLORS: Record<TrackType, string> = {
+  support:   "bg-amber/10 text-amber",
+  success:   "bg-sage/10 text-sage",
+  assistant: "bg-terra/10 text-terra",
+};
 
 const TRACK_LABELS: Record<TrackType, string> = {
   support:   "Support",
@@ -14,10 +19,19 @@ const TRACK_LABELS: Record<TrackType, string> = {
   assistant: "Assistant",
 };
 
-const TRACK_BADGE_VARIANT: Record<TrackType, "amber" | "sage" | "terra"> = {
-  support:   "amber",
-  success:   "sage",
-  assistant: "terra",
+const STATUS_BADGE: Record<string, { label: string; cls: string }> = {
+  registered:          { label: "No CV",              cls: "bg-mist text-moss" },
+  cv_uploaded:         { label: "CV uploaded",        cls: "bg-amber/10 text-amber" },
+  profile_parsed:      { label: "CV parsed",          cls: "bg-amber/10 text-amber" },
+  gaps_filled:         { label: "Profile complete",   cls: "bg-amber/15 text-amber font-semibold" },
+  assessment_invited:  { label: "Assessment sent",    cls: "bg-mist text-moss" },
+  assessment_complete: { label: "Assessment done",    cls: "bg-amber/15 text-amber font-semibold" },
+  interview_invited:   { label: "Interview sent",     cls: "bg-mist text-moss" },
+  assessed:            { label: "Assessed",           cls: "bg-forest/10 text-forest font-semibold" },
+  review_pending:      { label: "Pending review",     cls: "bg-mist text-moss" },
+  active:              { label: "Active",             cls: "bg-sage/10 text-sage font-semibold" },
+  placed:              { label: "Placed",             cls: "bg-sage/20 text-sage font-semibold" },
+  withdrawn:           { label: "Discarded",          cls: "bg-mist text-moss/60" },
 };
 
 function timeAgo(date: string): string {
@@ -31,71 +45,77 @@ function timeAgo(date: string): string {
 
 export function CandidateListRow({ c }: { c: CandidateRow }) {
   const router = useRouter();
-  const [discarding, setDiscarding] = useState(false);
-  const [discarded, setDiscarded] = useState(false);
+  const [loading, setLoading] = useState<string | null>(null);
+  const [done, setDone] = useState<string | null>(null);
 
-  const isDiscarded = discarded || c.status === "withdrawn";
-
-  const handleDiscard = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (!confirm(`Discard ${c.full_name || "this candidate"}?`)) return;
-    setDiscarding(true);
+  const call = async (key: string, url: string, method = "POST") => {
+    if (!confirm(`${key} for ${c.full_name || "this candidate"}?`)) return;
+    setLoading(key);
     try {
-      await fetch(`/api/admin/candidates/${c.id}/discard`, { method: "POST" });
-      setDiscarded(true);
+      await fetch(url, { method });
+      setDone(key);
       router.refresh();
     } catch {
       // ignore
     } finally {
-      setDiscarding(false);
+      setLoading(null);
     }
   };
 
+  const isDiscarded = c.status === "withdrawn";
   const tools = (c.tools as string[] | null) ?? [];
+  const statusBadge = STATUS_BADGE[c.status] ?? { label: c.status, cls: "bg-mist text-moss" };
 
   return (
     <div className={cn(
-      "flex items-start gap-3 px-4 py-3.5 hover:bg-cream/60 transition-colors group border-b border-mist last:border-0",
+      "flex items-start gap-3 px-4 py-3.5 hover:bg-cream/50 transition-colors border-b border-mist last:border-0",
       isDiscarded && "opacity-40"
     )}>
       {/* Avatar */}
-      <div className="w-8 h-8 rounded-full bg-forest/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-        <span className="text-xs font-semibold text-forest">
-          {c.full_name?.[0]?.toUpperCase() ?? "?"}
-        </span>
+      <div className="w-8 h-8 rounded-full bg-forest/8 flex items-center justify-center flex-shrink-0 mt-0.5 text-xs font-bold text-forest">
+        {c.full_name?.[0]?.toUpperCase() ?? "?"}
       </div>
 
       {/* Main info */}
       <div className="flex-1 min-w-0">
+        {/* Name + badges */}
         <div className="flex items-center gap-2 flex-wrap">
           <Link
             href={`/admin/candidates/${c.id}`}
             className="font-semibold text-sm text-char hover:text-amber transition-colors"
           >
-            {c.full_name || "—"}
+            {c.full_name || "Unnamed"}
           </Link>
-          <Badge variant={TRACK_BADGE_VARIANT[c.track]}>
+          <span className={cn("text-[10px] px-2 py-0.5 rounded-full font-mono", TRACK_COLORS[c.track])}>
             {TRACK_LABELS[c.track]}
-          </Badge>
-          {c.status === "cv_uploaded" || c.status === "gaps_filled" ? (
-            <Badge variant="amber" dot>CV uploaded</Badge>
-          ) : c.status === "registered" ? (
-            <Badge variant="sand" dot>No CV yet</Badge>
-          ) : c.status === "withdrawn" ? (
-            <Badge variant="moss">Discarded</Badge>
-          ) : null}
+          </span>
+          <span className={cn("text-[10px] px-2 py-0.5 rounded-full font-mono", statusBadge.cls)}>
+            {statusBadge.label}
+          </span>
+          {c.assessment_score !== null && (
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-forest/8 text-forest font-mono">
+              {c.assessment_score}/100 · {c.assessment_tier}
+            </span>
+          )}
         </div>
 
         {/* Location + experience */}
-        <div className="text-xs text-moss mt-0.5">
-          {[
-            c.location_city ? `${c.location_city}` : null,
-            c.years_experience ? `${c.years_experience}y exp` : null,
-          ].filter(Boolean).join(" · ")}
+        <div className="flex items-center gap-3 text-xs text-moss mt-0.5">
+          {c.location_city && (
+            <span className="flex items-center gap-1">
+              <MapPin size={9} />
+              {c.location_city}
+            </span>
+          )}
+          {c.years_experience !== null && (
+            <span className="flex items-center gap-1">
+              <Briefcase size={9} />
+              {c.years_experience}y
+            </span>
+          )}
         </div>
 
-        {/* AI summary snippet */}
+        {/* AI summary */}
         {c.summary && (
           <p className="text-xs text-moss/70 mt-1 leading-relaxed line-clamp-2 max-w-xl">
             {c.summary}
@@ -105,42 +125,77 @@ export function CandidateListRow({ c }: { c: CandidateRow }) {
         {/* Tools */}
         {tools.length > 0 && (
           <div className="flex items-center gap-1 mt-1.5 flex-wrap">
-            <Wrench size={10} className="text-moss/40" />
-            {tools.slice(0, 4).map((t) => (
+            <Wrench size={9} className="text-moss/40" />
+            {tools.slice(0, 5).map((t) => (
               <span key={t} className="text-[10px] px-1.5 py-0.5 bg-mist rounded text-moss font-mono">
                 {t}
               </span>
             ))}
-            {tools.length > 4 && (
-              <span className="text-[10px] text-moss/50">+{tools.length - 4}</span>
+            {tools.length > 5 && (
+              <span className="text-[10px] text-moss/50">+{tools.length - 5}</span>
             )}
           </div>
         )}
       </div>
 
-      {/* Right: time + actions */}
-      <div className="flex items-center gap-2 flex-shrink-0 mt-0.5">
+      {/* Right: time + inline actions */}
+      <div className="flex items-center gap-1.5 flex-shrink-0 mt-0.5">
         <span className="text-xs text-moss/40 font-mono hidden md:block w-14 text-right">
           {timeAgo(c.created_at)}
         </span>
 
+        {/* Stage-specific quick action */}
+        {done ? (
+          <span className="text-[10px] font-mono text-sage px-2">Sent</span>
+        ) : c.status === "gaps_filled" ? (
+          <button
+            disabled={loading === "invite-assessment"}
+            onClick={() => call("invite-assessment", `/api/admin/candidates/${c.id}/invite-assessment`)}
+            className="flex items-center gap-1 text-[10px] font-medium px-2 py-1 rounded-lg bg-amber/10 text-amber hover:bg-amber/20 transition-colors disabled:opacity-50"
+            title="Invite to assessment"
+          >
+            <Send size={10} />
+            {loading === "invite-assessment" ? "…" : "Invite"}
+          </button>
+        ) : c.status === "assessment_complete" ? (
+          <button
+            disabled={loading === "invite-interview"}
+            onClick={() => call("invite-interview", `/api/admin/candidates/${c.id}/invite-interview`)}
+            className="flex items-center gap-1 text-[10px] font-medium px-2 py-1 rounded-lg bg-amber/10 text-amber hover:bg-amber/20 transition-colors disabled:opacity-50"
+            title="Invite to interview"
+          >
+            <Send size={10} />
+            {loading === "invite-interview" ? "…" : "Interview"}
+          </button>
+        ) : c.status === "assessed" ? (
+          <Link
+            href={`/admin/candidates/${c.id}`}
+            className="flex items-center gap-1 text-[10px] font-medium px-2 py-1 rounded-lg bg-forest/8 text-forest hover:bg-forest/15 transition-colors"
+            title="Review and activate"
+          >
+            <Star size={10} />
+            Decide
+          </Link>
+        ) : null}
+
+        {/* Discard */}
         {!isDiscarded && (
           <button
-            onClick={handleDiscard}
-            disabled={discarding}
-            className="p-1.5 rounded-lg text-moss/40 hover:text-terra hover:bg-terra/10 transition-colors"
+            onClick={() => call("discard", `/api/admin/candidates/${c.id}/discard`)}
+            disabled={loading === "discard"}
+            className="p-1.5 rounded-lg text-moss/30 hover:text-terra hover:bg-terra/10 transition-colors"
             title="Discard"
           >
-            <XCircle size={15} />
+            <XCircle size={14} />
           </button>
         )}
 
+        {/* Open */}
         <Link
           href={`/admin/candidates/${c.id}`}
-          className="p-1.5 rounded-lg text-moss/40 hover:text-amber hover:bg-amber/10 transition-colors"
-          title="Review"
+          className="p-1.5 rounded-lg text-moss/30 hover:text-amber hover:bg-amber/10 transition-colors"
         >
-          <ChevronRight size={15} />
+          <ChevronRight size={14} />
         </Link>
       </div>
     </div>
