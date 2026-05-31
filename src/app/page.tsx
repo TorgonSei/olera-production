@@ -3,7 +3,6 @@ import Link from "next/link";
 import { Nav } from "@/components/layout/Nav";
 import { Footer } from "@/components/layout/Footer";
 import { Button } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import {
   Olera3A,
@@ -136,17 +135,9 @@ export default function HomePage() {
 
               {/* Left — copy */}
               <div>
-                {/* Eyebrow */}
-                <div className="flex items-center gap-3 mb-5">
-                  <Badge variant="sage" dot>
-                    Remote roles · International employers
-                  </Badge>
-                </div>
-
                 {/* Headline */}
                 <h1 className="font-display font-bold text-4xl sm:text-5xl lg:text-6xl text-char leading-[1.08] tracking-tight mb-5">
-                  Kenyan customer operations talent{" "}
-                  <span className="text-amber">for global teams.</span>
+                  Kenyan customer operations talent for global teams.
                 </h1>
 
                 {/* Sub-hero */}
@@ -160,8 +151,9 @@ export default function HomePage() {
                     Upload your CV
                     <ArrowRight size={18} />
                   </Button>
-                  <Button size="lg" variant="ghost" as="a" href="/employer">
-                    Hiring talent?
+                  <Button size="lg" variant="dark" as="a" href="/employer">
+                    Hire talent
+                    <ArrowRight size={18} />
                   </Button>
                 </div>
 
