@@ -23,9 +23,6 @@ export default function AboutPage() {
         <section className="bg-cream py-20 sm:py-28 border-b border-mist">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-3xl">
-              <p className="text-xs font-mono text-moss/60 uppercase tracking-widest mb-6">
-                About
-              </p>
               <h1 className="font-display font-bold text-5xl sm:text-6xl lg:text-7xl leading-[1.05] tracking-tight text-char mb-8">
                 Built in Nairobi. Built for the world.
               </h1>

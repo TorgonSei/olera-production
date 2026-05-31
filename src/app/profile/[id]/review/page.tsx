@@ -173,7 +173,7 @@ export default async function ProfileReviewPage({
           {/* Summary */}
           {candidate.summary && (
             <div className="mb-6">
-              <h3 className="text-xs font-mono text-moss/60 uppercase tracking-widest mb-2">
+              <h3 className="text-xs font-medium text-moss/60 mb-2">
                 Summary
               </h3>
               <p className="text-sm text-char leading-relaxed">{candidate.summary}</p>
@@ -184,7 +184,7 @@ export default async function ProfileReviewPage({
           <div className="grid grid-cols-2 gap-3 sm:gap-4 py-4 border-t border-mist">
             {candidate.years_experience !== null && (
               <div>
-                <p className="text-xs font-mono text-moss/60 uppercase tracking-widest mb-1">Experience</p>
+                <p className="text-xs font-medium text-moss/60 mb-1">Experience</p>
                 <p className="font-semibold text-char flex items-center gap-1.5">
                   <Briefcase size={14} className="text-amber" />
                   {candidate.years_experience} year{candidate.years_experience !== 1 ? "s" : ""}
@@ -193,7 +193,7 @@ export default async function ProfileReviewPage({
             )}
             {candidate.gap_contract_pref && (
               <div>
-                <p className="text-xs font-mono text-moss/60 uppercase tracking-widest mb-1">Contract</p>
+                <p className="text-xs font-medium text-moss/60 mb-1">Contract</p>
                 <p className="font-semibold text-char">
                   {candidate.gap_contract_pref === "full_time" ? "Full-time"
                     : candidate.gap_contract_pref === "part_time" ? "Part-time"
@@ -203,13 +203,13 @@ export default async function ProfileReviewPage({
             )}
             {candidate.gap_english_level && (
               <div>
-                <p className="text-xs font-mono text-moss/60 uppercase tracking-widest mb-1">English</p>
+                <p className="text-xs font-medium text-moss/60 mb-1">English</p>
                 <p className="font-semibold text-char capitalize">{candidate.gap_english_level}</p>
               </div>
             )}
             {candidate.gap_availability_weeks !== null && (
               <div>
-                <p className="text-xs font-mono text-moss/60 uppercase tracking-widest mb-1">Availability</p>
+                <p className="text-xs font-medium text-moss/60 mb-1">Availability</p>
                 <p className="font-semibold text-char">
                   {candidate.gap_availability_weeks === 0
                     ? "Immediately"
@@ -222,7 +222,7 @@ export default async function ProfileReviewPage({
           {/* Tools */}
           {(candidate.tools ?? []).length > 0 && (
             <div className="mt-4 pt-4 border-t border-mist">
-              <h3 className="text-xs font-mono text-moss/60 uppercase tracking-widest mb-3 flex items-center gap-1.5">
+              <h3 className="text-xs font-medium text-moss/60 mb-3 flex items-center gap-1.5">
                 <Wrench size={12} />
                 Tools
               </h3>
@@ -242,7 +242,7 @@ export default async function ProfileReviewPage({
           {/* Specialisations */}
           {(candidate.specialisations ?? []).length > 0 && (
             <div className="mt-4 pt-4 border-t border-mist">
-              <h3 className="text-xs font-mono text-moss/60 uppercase tracking-widest mb-3 flex items-center gap-1.5">
+              <h3 className="text-xs font-medium text-moss/60 mb-3 flex items-center gap-1.5">
                 <Star size={12} />
                 Specialisations
               </h3>
@@ -263,7 +263,7 @@ export default async function ProfileReviewPage({
         {/* Assessment result */}
         {candidate.assessment_score !== null && (
           <Card variant="elevated" className="mb-6">
-            <h3 className="text-xs font-mono text-moss/60 uppercase tracking-widest mb-4 flex items-center gap-1.5">
+            <h3 className="text-xs font-medium text-moss/60 mb-4 flex items-center gap-1.5">
               <Star size={12} />
               Your results
             </h3>

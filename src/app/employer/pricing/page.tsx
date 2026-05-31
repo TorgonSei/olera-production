@@ -97,9 +97,6 @@ export default function PricingPage() {
         <section className="bg-forest text-cream">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 sm:pt-28 sm:pb-20">
             <div className="max-w-3xl">
-              <p className="text-xs font-mono text-cream/40 uppercase tracking-widest mb-6">
-                Pricing
-              </p>
               <h1 className="font-display font-bold text-5xl sm:text-6xl lg:text-7xl leading-[1.05] tracking-tight mb-6">
                 One flat fee.{" "}
                 <span className="text-amber">Paid once, on hire.</span>
@@ -135,8 +132,8 @@ export default function PricingPage() {
                 >
                   {/* Tier name */}
                   <p
-                    className={`text-xs font-mono uppercase tracking-widest ${
-                      plan.highlight ? "text-forest/50" : "text-cream/40"
+                    className={`text-xs font-medium ${
+                      plan.highlight ? "text-forest/60" : "text-cream/50"
                     }`}
                   >
                     {plan.tier}
@@ -152,7 +149,7 @@ export default function PricingPage() {
                       {plan.fee}
                     </p>
                     <p
-                      className={`text-xs font-mono ${
+                      className={`text-xs ${
                         plan.highlight ? "text-forest/40" : "text-cream/30"
                       }`}
                     >
@@ -174,8 +171,8 @@ export default function PricingPage() {
                     style={{ borderColor: plan.highlight ? "rgba(26,38,32,0.12)" : "rgba(255,255,255,0.07)" }}
                   >
                     <p
-                      className={`text-xs font-mono uppercase tracking-widest mb-1 ${
-                        plan.highlight ? "text-forest/40" : "text-cream/25"
+                      className={`text-xs font-medium mb-1 ${
+                        plan.highlight ? "text-forest/40" : "text-cream/30"
                       }`}
                     >
                       Example roles
@@ -202,9 +199,6 @@ export default function PricingPage() {
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
               <div>
-                <p className="text-xs font-mono text-moss/60 uppercase tracking-widest mb-4">
-                  Every tier
-                </p>
                 <h2 className="font-display font-bold text-4xl sm:text-5xl text-char leading-tight mb-5">
                   The same process, regardless of level.
                 </h2>
@@ -221,9 +215,7 @@ export default function PricingPage() {
               </div>
 
               <div className="bg-white border border-mist rounded-2xl p-7">
-                <p className="text-xs font-mono text-moss/50 uppercase tracking-widest mb-5">
-                  Included with every hire
-                </p>
+                <p className="text-sm font-medium text-moss/60 mb-5">Included with every hire</p>
                 <div className="space-y-3">
                   {ALWAYS_INCLUDED.map((item) => (
                     <div key={item} className="flex items-start gap-3">
@@ -242,7 +234,7 @@ export default function PricingPage() {
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
               <div>
-                <p className="text-xs font-mono text-moss/60 uppercase tracking-widest mb-2">
+                <p className="text-xs font-medium text-moss/60 mb-2">
                   Placement fee
                 </p>
                 <p className="font-display font-bold text-3xl text-char mb-1">
@@ -253,7 +245,7 @@ export default function PricingPage() {
                 </p>
               </div>
               <div>
-                <p className="text-xs font-mono text-moss/60 uppercase tracking-widest mb-2">
+                <p className="text-xs font-medium text-moss/60 mb-2">
                   Typical candidate pay
                 </p>
                 <p className="font-display font-bold text-3xl text-char mb-1">
@@ -264,7 +256,7 @@ export default function PricingPage() {
                 </p>
               </div>
               <div>
-                <p className="text-xs font-mono text-moss/60 uppercase tracking-widest mb-2">
+                <p className="text-xs font-medium text-moss/60 mb-2">
                   Replacement window
                 </p>
                 <p className="font-display font-bold text-3xl text-char mb-1">

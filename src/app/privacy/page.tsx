@@ -18,9 +18,6 @@ export default function PrivacyPage() {
       <main>
         <section className="bg-cream py-20 sm:py-28 border-b border-mist">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-            <p className="text-xs font-mono text-moss/60 uppercase tracking-widest mb-6">
-              Legal
-            </p>
             <h1 className="font-display font-bold text-5xl sm:text-6xl leading-[1.05] tracking-tight text-char mb-4">
               Privacy Policy
             </h1>

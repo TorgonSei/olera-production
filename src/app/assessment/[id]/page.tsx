@@ -237,9 +237,7 @@ export default function AssessmentPage() {
         {/* ── INTRO ────────────────────────────────────────────────────── */}
         {step === "intro" && (
           <div>
-            <p className="text-xs font-mono text-moss/60 uppercase tracking-widest mb-4">
-              Step 3 of 3 · Show your work
-            </p>
+            <p className="text-sm text-moss/60 mb-4">Step 3 of 3</p>
             <h1 className="font-display font-bold text-3xl text-char mb-4">
               Almost there — now show your work.
             </h1>
@@ -285,9 +283,7 @@ export default function AssessmentPage() {
           <div>
             <div className="flex items-center justify-between mb-6">
               <div>
-                <p className="text-xs font-mono text-moss/60 uppercase tracking-widest mb-1">
-                  Part 1 of 3 · Written response
-                </p>
+                <p className="text-sm text-moss/60 mb-1">Part 1 of 3</p>
                 <h2 className="font-display font-bold text-2xl text-char">Open scenario</h2>
               </div>
               <div className="text-xs font-mono text-moss/60 bg-white px-3 py-1.5 rounded-full border border-mist">
@@ -344,8 +340,8 @@ export default function AssessmentPage() {
           <div>
             <div className="mb-6">
               <div className="flex items-center justify-between mb-1">
-                <p className="text-xs font-mono text-moss/60 uppercase tracking-widest">
-                  Part 2 of 3 · Judgment · {currentScenario + 1} of {scenarios.length}
+                <p className="text-sm text-moss/60">
+                  Part 2 of 3 · {currentScenario + 1} of {scenarios.length}
                 </p>
                 {/* Progress dots */}
                 <div className="flex gap-1.5">
@@ -421,9 +417,7 @@ export default function AssessmentPage() {
         {step === "tools" && (
           <div>
             <div className="mb-6">
-              <p className="text-xs font-mono text-moss/60 uppercase tracking-widest mb-1">
-                Part 3 of 3 · Tool familiarity
-              </p>
+              <p className="text-sm text-moss/60 mb-1">Part 3 of 3</p>
               <h2 className="font-display font-bold text-2xl text-char mb-2">
                 Rate your confidence
               </h2>

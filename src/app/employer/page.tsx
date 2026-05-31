@@ -102,9 +102,6 @@ export default function EmployerPage() {
         <section className="bg-forest text-cream">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 sm:pt-28 sm:pb-24">
             <div className="max-w-3xl">
-              <p className="text-xs font-mono text-cream/40 uppercase tracking-widest mb-6">
-                For employers
-              </p>
               <h1 className="font-display font-bold text-5xl sm:text-6xl lg:text-7xl leading-[1.05] tracking-tight mb-6">
                 Hire assessed customer operations talent from Kenya.
               </h1>
@@ -166,9 +163,6 @@ export default function EmployerPage() {
         <section className="py-20 bg-cream">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="max-w-2xl mb-14">
-              <p className="text-xs font-mono text-moss/60 uppercase tracking-widest mb-4">
-                Why Kenya
-              </p>
               <h2 className="font-display font-bold text-4xl sm:text-5xl text-char leading-tight mb-6">
                 Why Kenya works for customer operations.
               </h2>
@@ -210,9 +204,6 @@ export default function EmployerPage() {
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div>
-                <p className="text-xs font-mono text-cream/40 uppercase tracking-widest mb-4">
-                  Global hiring range
-                </p>
                 <p className="font-display font-bold text-5xl sm:text-6xl text-amber mb-3">
                   $12,000–$30,000
                 </p>
@@ -229,9 +220,7 @@ export default function EmployerPage() {
                 </p>
               </div>
               <div>
-                <p className="text-xs font-mono text-cream/40 uppercase tracking-widest mb-4">
-                  Assessed by Olera before introduction
-                </p>
+                <p className="text-sm font-medium text-cream/50 mb-4">Assessed before introduction</p>
                 <div className="space-y-3">
                   {[
                     "Communication",
@@ -256,9 +245,6 @@ export default function EmployerPage() {
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
               <div>
-                <p className="text-xs font-mono text-moss/60 uppercase tracking-widest mb-4">
-                  Before you interview
-                </p>
                 <h2 className="font-display font-bold text-4xl sm:text-5xl text-char mb-5 leading-tight">
                   What employers see before they interview.
                 </h2>
@@ -273,9 +259,7 @@ export default function EmployerPage() {
               </div>
 
               <div className="bg-white border border-mist rounded-2xl p-6">
-                <p className="text-xs font-mono text-moss/50 uppercase tracking-widest mb-5">
-                  Each shortlist can include
-                </p>
+                <p className="text-sm font-medium text-moss/60 mb-5">Each shortlist includes</p>
                 <div className="space-y-3">
                   {PROFILE_ITEMS.map((item, i) => (
                     <div key={item} className="flex items-center gap-3">
@@ -295,9 +279,6 @@ export default function EmployerPage() {
         <section className="py-20 bg-cream">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="mb-12">
-              <p className="text-xs font-mono text-moss/60 uppercase tracking-widest mb-4">
-                How it works
-              </p>
               <h2 className="font-display font-bold text-4xl sm:text-5xl text-char">
                 Three steps.
               </h2>
@@ -347,9 +328,6 @@ export default function EmployerPage() {
         <section className="py-20 bg-forest text-cream">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="mb-12">
-              <p className="text-xs font-mono text-cream/40 uppercase tracking-widest mb-4">
-                Pricing
-              </p>
               <h2 className="font-display font-bold text-4xl sm:text-5xl mb-4">
                 One flat fee. Paid once, on hire.
               </h2>
@@ -394,8 +372,8 @@ export default function EmployerPage() {
                   }`}
                 >
                   <p
-                    className={`text-xs font-mono uppercase tracking-widest ${
-                      plan.highlight ? "text-forest/50" : "text-cream/40"
+                    className={`text-xs font-medium ${
+                      plan.highlight ? "text-forest/60" : "text-cream/50"
                     }`}
                   >
                     {plan.tier}
@@ -428,9 +406,6 @@ export default function EmployerPage() {
         <section className="py-20 bg-cream">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="mb-12">
-              <p className="text-xs font-mono text-moss/60 uppercase tracking-widest mb-4">
-                Questions
-              </p>
               <h2 className="font-display font-bold text-4xl sm:text-5xl text-char">
                 The things people ask before they commit.
               </h2>

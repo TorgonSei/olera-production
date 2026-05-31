@@ -70,7 +70,7 @@ export function BriefForm() {
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label className="block text-xs font-mono text-moss/60 uppercase tracking-widest mb-2">
+          <label className="block text-sm font-medium text-moss/70 mb-1.5">
             Company name
           </label>
           <input
@@ -82,7 +82,7 @@ export function BriefForm() {
           />
         </div>
         <div>
-          <label className="block text-xs font-mono text-moss/60 uppercase tracking-widest mb-2">
+          <label className="block text-sm font-medium text-moss/70 mb-1.5">
             Role track
           </label>
           <select
@@ -100,7 +100,7 @@ export function BriefForm() {
       </div>
 
       <div>
-        <label className="block text-xs font-mono text-moss/60 uppercase tracking-widest mb-2">
+        <label className="block text-sm font-medium text-moss/70 mb-1.5">
           What will this person actually be doing?{" "}
           <span className="text-amber">*</span>
         </label>
@@ -115,7 +115,7 @@ export function BriefForm() {
       </div>
 
       <div>
-        <label className="block text-xs font-mono text-moss/60 uppercase tracking-widest mb-2">
+        <label className="block text-sm font-medium text-moss/70 mb-1.5">
           Your email <span className="text-amber">*</span>
         </label>
         <input

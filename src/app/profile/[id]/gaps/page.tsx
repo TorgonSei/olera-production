@@ -121,9 +121,7 @@ export default function GapsPage() {
       <div className="max-w-xl mx-auto px-4 py-12">
         {/* Title */}
         <div className="mb-10">
-          <p className="text-xs font-mono text-moss/60 uppercase tracking-widest mb-2">
-            Step 2 of 3 · Complete your profile
-          </p>
+          <p className="text-sm text-moss/60 mb-2">Step 2 of 3</p>
           <h1 className="font-display font-bold text-3xl text-char mb-2">
             A few quick details
           </h1>

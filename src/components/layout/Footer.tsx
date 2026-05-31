@@ -19,7 +19,7 @@ export function Footer() {
 
           {/* Candidates */}
           <div>
-            <h4 className="text-xs font-mono font-medium text-cream/40 uppercase tracking-widest mb-3">
+            <h4 className="text-xs font-semibold text-cream/50 mb-3">
               Candidates
             </h4>
             <ul className="space-y-2">
@@ -39,7 +39,7 @@ export function Footer() {
 
           {/* Employers */}
           <div>
-            <h4 className="text-xs font-mono font-medium text-cream/40 uppercase tracking-widest mb-3">
+            <h4 className="text-xs font-semibold text-cream/50 mb-3">
               Employers
             </h4>
             <ul className="space-y-2">
@@ -59,7 +59,7 @@ export function Footer() {
 
           {/* Company */}
           <div>
-            <h4 className="text-xs font-mono font-medium text-cream/40 uppercase tracking-widest mb-3">
+            <h4 className="text-xs font-semibold text-cream/50 mb-3">
               Company
             </h4>
             <ul className="space-y-2">

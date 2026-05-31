@@ -218,9 +218,6 @@ export default function HomePage() {
         <section className="py-20 bg-cream">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="mb-12">
-              <p className="text-xs font-mono text-moss/60 uppercase tracking-widest mb-3">
-                For candidates
-              </p>
               <h2 className="font-display font-bold text-4xl sm:text-5xl text-char">
                 Can I apply?
               </h2>
@@ -244,9 +241,6 @@ export default function HomePage() {
         <section className="py-20 bg-mist/30">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="mb-12">
-              <p className="text-xs font-mono text-moss/60 uppercase tracking-widest mb-3">
-                Three role tracks
-              </p>
               <h2 className="font-display font-bold text-4xl sm:text-5xl text-char leading-tight">
                 One clear focus.
               </h2>
@@ -276,7 +270,7 @@ export default function HomePage() {
                     </p>
 
                     <div className="space-y-1.5 mb-5">
-                      <p className="text-xs font-mono text-moss/50 uppercase tracking-wider mb-2">
+                      <p className="text-xs font-medium text-moss/50 mb-2">
                         Typical roles
                       </p>
                       {track.roles.map((role) => (
@@ -310,9 +304,6 @@ export default function HomePage() {
         <section id="how-it-works" className="py-14 sm:py-20 bg-cream">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="mb-10 sm:mb-12">
-              <p className="text-xs font-mono text-moss/60 uppercase tracking-widest mb-3">
-                How it works
-              </p>
               <h2 className="font-display font-bold text-3xl sm:text-4xl lg:text-5xl text-char">
                 Start with your CV.{" "}
                 <span className="text-amber">We ask for the rest.</span>
@@ -357,9 +348,6 @@ export default function HomePage() {
         <section className="py-16 bg-mist/30 border-y border-mist">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="mb-10">
-              <p className="text-xs font-mono text-moss/60 uppercase tracking-widest mb-3">
-                Your Olera path
-              </p>
               <h2 className="font-display font-bold text-3xl sm:text-4xl text-char leading-tight">
                 Four levels. Progress at your own pace.
               </h2>
@@ -452,9 +440,6 @@ export default function HomePage() {
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
               <div>
-                <p className="text-xs font-mono text-cream/40 uppercase tracking-widest mb-4">
-                  For employers
-                </p>
                 <h2 className="font-display font-bold text-4xl sm:text-5xl leading-tight mb-5">
                   Hire Kenyan customer operations talent without sorting through
                   hundreds of CVs.

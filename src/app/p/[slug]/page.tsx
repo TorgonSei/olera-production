@@ -161,14 +161,14 @@ export default async function PublicProfilePage({
           {c.assessment_score !== null && (
             <div className="mt-6 pt-6 border-t border-white/10 flex items-center gap-6 flex-wrap">
               <div>
-                <p className="text-xs font-mono text-cream/40 mb-1">Assessment score</p>
+                <p className="text-xs font-medium text-cream/50 mb-1">Assessment score</p>
                 <div className="flex items-center gap-3">
                   <span className="font-display font-bold text-2xl text-cream">{c.assessment_score}</span>
                   <OleraFitCategory level={fitLevel} size={20} showLabel />
                 </div>
               </div>
               <div>
-                <p className="text-xs font-mono text-cream/40 mb-1">Readiness</p>
+                <p className="text-xs font-medium text-cream/50 mb-1">Readiness</p>
                 <Badge
                   variant={c.readiness === "ready" ? "sage" : "amber"}
                   dot
@@ -186,7 +186,7 @@ export default async function PublicProfilePage({
 
         {/* Work preferences */}
         <section>
-          <h2 className="text-xs font-mono text-moss/60 uppercase tracking-widest mb-4">Work preferences</h2>
+          <h2 className="text-xs font-medium text-moss/60 mb-3">Work preferences</h2>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             {[
               {
@@ -214,7 +214,7 @@ export default async function PublicProfilePage({
             ].map(({ label, value }) =>
               value ? (
                 <div key={label} className="bg-white border border-mist rounded-xl p-4">
-                  <p className="text-xs font-mono text-moss/60 mb-1">{label}</p>
+                  <p className="text-xs font-medium text-moss/60 mb-1">{label}</p>
                   <p className="font-semibold text-char text-sm">{value}</p>
                 </div>
               ) : null
@@ -225,7 +225,7 @@ export default async function PublicProfilePage({
         {/* Tools */}
         {(c.tools ?? []).length > 0 && (
           <section>
-            <h2 className="text-xs font-mono text-moss/60 uppercase tracking-widest mb-4 flex items-center gap-1.5">
+            <h2 className="text-xs font-medium text-moss/60 mb-3 flex items-center gap-1.5">
               <Wrench size={12} />
               Tools & platforms
             </h2>
@@ -245,7 +245,7 @@ export default async function PublicProfilePage({
         {/* Specialisations */}
         {(c.specialisations ?? []).length > 0 && (
           <section>
-            <h2 className="text-xs font-mono text-moss/60 uppercase tracking-widest mb-4 flex items-center gap-1.5">
+            <h2 className="text-xs font-medium text-moss/60 mb-3 flex items-center gap-1.5">
               <Star size={12} />
               Specialisations
             </h2>
@@ -283,7 +283,7 @@ export default async function PublicProfilePage({
                   : "Candidate has indicated they have a suitable remote work setup."}
               </p>
               {c.internet_speed_mbps && (
-                <p className="text-xs font-mono text-moss/60 mt-1.5">
+                <p className="text-xs font-medium text-moss/60 mt-1.5">
                   Internet speed: {c.internet_speed_mbps} Mbps
                 </p>
               )}

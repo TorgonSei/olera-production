@@ -21,9 +21,6 @@ export default function ContactPage() {
         {/* ── Hero ─────────────────────────────────────────────────────── */}
         <section className="bg-cream py-20 sm:py-28 border-b border-mist">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <p className="text-xs font-mono text-moss/60 uppercase tracking-widest mb-6">
-              Contact
-            </p>
             <h1 className="font-display font-bold text-5xl sm:text-6xl leading-[1.05] tracking-tight text-char mb-6">
               Get in touch.
             </h1>
@@ -41,7 +38,7 @@ export default function ContactPage() {
 
               {/* Employers */}
               <div className="bg-forest text-cream rounded-2xl p-8">
-                <p className="text-xs font-mono text-cream/40 uppercase tracking-widest mb-4">
+                <p className="text-xs font-semibold text-cream/50 mb-3">
                   Employers
                 </p>
                 <h2 className="font-display font-semibold text-2xl mb-3 leading-snug">
@@ -69,7 +66,7 @@ export default function ContactPage() {
 
               {/* Candidates */}
               <div className="bg-white border border-mist rounded-2xl p-8">
-                <p className="text-xs font-mono text-moss/50 uppercase tracking-widest mb-4">
+                <p className="text-xs font-semibold text-moss/50 mb-3">
                   Candidates
                 </p>
                 <h2 className="font-display font-semibold text-2xl text-char mb-3 leading-snug">
@@ -98,7 +95,7 @@ export default function ContactPage() {
 
               {/* Press / partnerships */}
               <div className="bg-white border border-mist rounded-2xl p-8">
-                <p className="text-xs font-mono text-moss/50 uppercase tracking-widest mb-4">
+                <p className="text-xs font-semibold text-moss/50 mb-3">
                   Press &amp; partnerships
                 </p>
                 <h2 className="font-display font-semibold text-2xl text-char mb-3 leading-snug">
@@ -119,7 +116,7 @@ export default function ContactPage() {
 
               {/* General */}
               <div className="bg-mist/40 border border-mist rounded-2xl p-8">
-                <p className="text-xs font-mono text-moss/50 uppercase tracking-widest mb-4">
+                <p className="text-xs font-semibold text-moss/50 mb-3">
                   General
                 </p>
                 <h2 className="font-display font-semibold text-2xl text-char mb-3 leading-snug">

@@ -209,9 +209,6 @@ export default async function DashboardPage() {
 
         {/* What's next card */}
         <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm mb-6">
-          <p className="text-xs font-mono text-moss/60 uppercase tracking-widest mb-4">
-            What to do next
-          </p>
           <div className="flex items-start gap-4">
             <div className="w-10 h-10 rounded-2xl bg-amber/10 flex items-center justify-center flex-shrink-0 mt-0.5">
               {nextAction.icon}
@@ -239,9 +236,6 @@ export default async function DashboardPage() {
         {/* Assessment feedback — only if assessed and has score */}
         {candidate.assessment_score !== null && candidate.assessment_score !== undefined && (
           <div className="bg-white/60 rounded-2xl p-5 mb-6">
-            <p className="text-xs font-mono text-moss/60 uppercase tracking-widest mb-3">
-              Your result
-            </p>
             <div className="flex items-center gap-4">
               <div>
                 <p className="font-display font-bold text-3xl text-char">
