@@ -244,8 +244,8 @@ function JoinPageInner() {
                   type="text"
                   inputMode="numeric"
                   pattern="[0-9]*"
-                  maxLength={8}
-                  placeholder="00000000"
+                  maxLength={6}
+                  placeholder="000000"
                   value={otp}
                   onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
                   onKeyDown={(e) => e.key === "Enter" && handleVerifyOtp()}
