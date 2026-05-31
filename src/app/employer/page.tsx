@@ -188,7 +188,7 @@ export default function EmployerPage() {
             </div>
 
             {/* Kicker — sits just above the cards it introduces */}
-            <p className="text-center font-semibold text-char mb-10">
+            <p className="font-semibold text-char mb-10">
               Kenya has the talent. Olera adds the signal.
             </p>
 
