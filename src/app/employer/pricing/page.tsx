@@ -97,7 +97,7 @@ export default function PricingPage() {
         <section className="bg-forest text-cream">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 sm:pt-28 sm:pb-20">
             <div className="max-w-3xl">
-              <h1 className="font-display font-bold text-5xl sm:text-6xl lg:text-7xl leading-[1.05] tracking-tight mb-6">
+              <h1 className="font-display font-bold text-4xl sm:text-5xl lg:text-7xl leading-[1.05] tracking-tight mb-6">
                 One flat fee.{" "}
                 <span className="text-amber">Paid once, on hire.</span>
               </h1>
@@ -142,7 +142,7 @@ export default function PricingPage() {
                   {/* Price */}
                   <div>
                     <p
-                      className={`font-display font-bold text-5xl tracking-tight leading-none mb-1 ${
+                      className={`font-display font-bold text-4xl sm:text-5xl tracking-tight leading-none mb-1 ${
                         plan.highlight ? "text-forest" : "text-cream"
                       }`}
                     >

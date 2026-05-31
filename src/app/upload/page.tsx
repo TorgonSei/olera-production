@@ -60,7 +60,7 @@ export default function UploadPage() {
         <OleraLockupH size={26} />
       </header>
 
-      <div className="flex-1 flex flex-col items-center justify-center px-4 py-12">
+      <div className="flex-1 flex flex-col items-center justify-center px-4 py-12 pb-20 sm:pb-12">
         <div className="w-full max-w-md">
           <div className="mb-8">
             <div className="w-12 h-12 rounded-full bg-amber/10 flex items-center justify-center mb-4">

@@ -102,10 +102,10 @@ export default function EmployerPage() {
         <section className="bg-forest text-cream">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 sm:pt-28 sm:pb-24">
             <div className="max-w-3xl">
-              <h1 className="font-display font-bold text-5xl sm:text-6xl lg:text-7xl leading-[1.05] tracking-tight mb-6">
+              <h1 className="font-display font-bold text-4xl sm:text-5xl lg:text-7xl leading-[1.05] tracking-tight mb-6">
                 Hire assessed customer operations talent from Kenya.
               </h1>
-              <p className="text-xl text-cream/70 leading-relaxed mb-6 max-w-2xl">
+              <p className="text-base sm:text-xl text-cream/70 leading-relaxed mb-6 max-w-2xl">
                 Olera sends small, focused shortlists for customer support,
                 customer success, and virtual assistant roles. Each candidate
                 has completed a profile and practical assessment before

@@ -77,7 +77,7 @@ export default function RootLayout({
       lang="en"
       className={`${hanken.variable} ${bricolage.variable} ${instrument.variable} ${jetbrains.variable} h-full`}
     >
-      <body className="min-h-full flex flex-col antialiased">{children}</body>
+      <body className="min-h-full flex flex-col antialiased overflow-x-hidden">{children}</body>
     </html>
   );
 }

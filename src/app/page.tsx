@@ -432,7 +432,7 @@ export default function HomePage() {
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
               <div>
-                <h2 className="font-display font-bold text-4xl sm:text-5xl leading-tight mb-5">
+                <h2 className="font-display font-bold text-3xl sm:text-4xl lg:text-5xl leading-tight mb-5">
                   Hire Kenyan customer operations talent without sorting through
                   hundreds of CVs.
                 </h2>

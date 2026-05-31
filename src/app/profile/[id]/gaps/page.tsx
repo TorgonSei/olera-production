@@ -102,7 +102,7 @@ export default function GapsPage() {
         }),
       });
       if (!res.ok) throw new Error((await res.json()).error ?? "Save failed");
-      router.push(`/assessment/${id}`);
+      router.push(`/dashboard`);
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "Something went wrong");
     } finally {
@@ -118,15 +118,14 @@ export default function GapsPage() {
         <OleraCompleteness value={completeness} size={40} />
       </header>
 
-      <div className="max-w-xl mx-auto px-4 py-12">
+      <div className="max-w-xl mx-auto px-4 py-10 pb-24 sm:pb-12">
         {/* Title */}
         <div className="mb-10">
-          <p className="text-sm text-moss/60 mb-2">Step 2 of 3</p>
           <h1 className="font-display font-bold text-3xl text-char mb-2">
             A few quick details
           </h1>
           <p className="text-moss">
-            We extracted what we could from your CV. Just fill in what's missing — takes 2 minutes.
+            We extracted what we could from your CV. Fill in what&apos;s missing — takes 2 minutes.
           </p>
         </div>
 
@@ -289,12 +288,12 @@ export default function GapsPage() {
             loading={loading}
             onClick={handleSubmit}
           >
-            Show your work
+            Submit profile
             <ArrowRight size={18} />
           </Button>
 
           <p className="text-xs text-center text-moss/60">
-            Next: short practical tasks showing your communication, judgment, and work style
+            Olera will review your profile and be in touch if there's a match.
           </p>
         </div>
       </div>

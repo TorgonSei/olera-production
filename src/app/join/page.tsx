@@ -90,7 +90,7 @@ function JoinPageInner() {
         <span className="text-xs text-moss font-mono">Free for candidates</span>
       </header>
 
-      <div className="flex-1 flex flex-col items-center justify-center px-4 py-12">
+      <div className="flex-1 flex flex-col items-center justify-center px-4 py-12 pb-20 sm:pb-12">
         {/* Progress dots */}
         <div className="flex items-center gap-2 mb-8" aria-label="Onboarding progress">
           {STEP_ORDER.map((s, i) => (
